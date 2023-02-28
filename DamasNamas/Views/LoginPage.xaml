@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="DamasNamas.Views.LoginPage"
+             xmlns:vm="clr-namespace:DamasNamas.ViewModels"
+             Title="LoginPage">
+    <ContentPage.BindingContext>
+        <vm:LoginVM/>
+    </ContentPage.BindingContext>
+
+
+    <VerticalStackLayout
+        VerticalOptions="Center">
+
+        <Frame
+                 HeightRequest="{OnPlatform Android=550}"
+                
+                 WidthRequest="{OnPlatform Android=350}">
+            <Grid
+                    ColumnDefinitions="*,*"
+                    RowDefinitions="*,*,*"
+                    ColumnSpacing="5"
+                    RowSpacing="0"
+                    Padding="40,30,40,0">
+                <Frame 
+                        CornerRadius="50"
+                        WidthRequest="100"
+                        BorderColor="AliceBlue"
+                         HeightRequest="100"     
+                         Grid.ColumnSpan="3">
+                    <Image 
+                            Source="principal" 
+                            WidthRequest="{OnPlatform Android=90}"
+                            HeightRequest="{OnPlatform Android=90}"
+                            Grid.RowSpan="3"
+                            Grid.Row="0" />
+                </Frame>
+
+
+                <VerticalStackLayout
+                        Grid.ColumnSpan="2"
+                        Grid.RowSpan="2"            
+                        VerticalOptions="End">
+
+                    <Entry
+                            Text="{Binding Username}"
+                            VerticalOptions="End"
+                            Placeholder="Username"
+                            HeightRequest="{OnPlatform Android=45}"
+                            Margin="0,0,0,15"/>
+
+                    <Entry
+                            HeightRequest="{OnPlatform Android=45}"
+                            Placeholder="Password"
+                            Text="{Binding Password}"
+                            IsPassword="True"/>
+
+                </VerticalStackLayout>
+
+
+                <HorizontalStackLayout
+                        Grid.Row="3"
+                        Grid.ColumnSpan="2"
+                        Margin="0,0,0,0"
+                        Spacing="50"
+                        HorizontalOptions="Center">
+
+                    <Button
+                            Command="{Binding ComandoLogin}"
+                            Text="Log in"
+                            IsEnabled="{Binding IsBusy}"
+                            BackgroundColor="RoyalBlue"
+                            VerticalOptions="Center"
+                            HorizontalOptions="Center"/>
+
+                    <Button
+                            Command="{Binding ComandoSignup}"
+                        IsEnabled="{Binding IsBusy}"
+                            Text="Sign up"
+                            BackgroundColor="RoyalBlue"
+                            VerticalOptions="Center"
+                            HorizontalOptions="Center"/>
+
+                </HorizontalStackLayout>
+
+
+            </Grid>
+        </Frame>
+
+    </VerticalStackLayout>
+
+</ContentPage>

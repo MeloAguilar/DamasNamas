@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="DamasNamas.Views.RoomsPage"
+             xmlns:vm="clr-namespace:DamasNamas.ViewModels"
+             Title="RoomsPage">
+    <ContentPage.BindingContext>
+        <vm:RoomsVM/>
+    </ContentPage.BindingContext>
+    <VerticalStackLayout
+        Spacing="{OnPlatform Android=15}">
+        <Frame
+            Margin="{OnPlatform Android=3}"
+            CornerRadius="60"
+            Padding="0,7,9,7"
+            HeightRequest="{OnPlatform Android=55}">
+            <SearchBar Text="{Binding CadenaBusqueda}"/>
+        </Frame>
+
+        <VerticalStackLayout Spacing="{OnPlatform Android=130}">
+
+
+
+
+            <Frame
+           HeightRequest="{OnPlatform Android=400}">
+
+                <ListView ItemsSource="{Binding ListadoSalas}" SelectedItem="{Binding SalaSeleccionada}">
+
+                    <ListView.ItemTemplate>
+
+                        <DataTemplate>
+
+                            <ViewCell>
+
+                                <HorizontalStackLayout>
+
+                                    <Label Text="{Binding nombreSala}"
+                                   FontSize="{OnPlatform Android=16}"/>
+
+                                </HorizontalStackLayout>
+
+                            </ViewCell>
+
+                        </DataTemplate>
+
+                    </ListView.ItemTemplate>
+
+                </ListView>
+            </Frame>
+
+            <HorizontalStackLayout Spacing="{OnPlatform Android=100}"
+                               Margin="{OnPlatform Android=10}"
+                               VerticalOptions="End"
+                               >
+
+                <Button Text="Entrar a sala" Command="{Binding ComandoEntrarSala}"
+                    VerticalOptions="End"/>
+
+                <Button Text="Crear sala" Command="{Binding ComandoCrearSala}"/>
+
+            </HorizontalStackLayout>
+
+
+
+        </VerticalStackLayout>
+    </VerticalStackLayout>
+</ContentPage>

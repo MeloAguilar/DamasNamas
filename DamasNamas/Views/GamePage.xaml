@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="DamasNamas.Views.GamePage"
+              xmlns:vm="clr-namespace:DamasNamas.ViewModels"
+             Title="GamePage">
+    <ContentPage.BindingContext>
+        <vm:GameVM/>
+    </ContentPage.BindingContext>
+    <VerticalStackLayout
+        Spacing="{OnPlatform Android=10}">
+
+        <Label 
+            Margin="{OnPlatform Android='0,10,0,0'}"
+                FontSize="30"
+                FontFamily="Bold"
+                Text="{Binding Reloj}"
+                VerticalOptions="Center"
+                HorizontalOptions="Center"/>
+        <Frame
+            Margin="5,10,5,5"
+            CornerRadius="20">
+            <HorizontalStackLayout
+                        Spacing="250">
+
+
+                <Label
+                FontSize="25"
+                FontFamily="Bold"
+                Text="Pepe"
+                VerticalOptions="Center"
+                HorizontalOptions="Start"/>
+
+
+                <Label
+                FontSize="25"
+                FontFamily="Bold"
+                Text="12"
+                VerticalOptions="Center"
+                HorizontalOptions="End"/>
+
+
+            </HorizontalStackLayout>
+        </Frame>
+
+
+
+        <CollectionView 
+            VerticalOptions="Center"
+            HorizontalOptions="Center"
+            ItemsSource="{Binding HuecosTablero}"  
+            SelectedItem="{Binding HuecoSeleccinado, Mode=TwoWay}"
+            SelectionMode="Single"
+            HeightRequest="{OnPlatform Android=410, WinUI=350}"
+            WidthRequest="{OnPlatform Android=385, WinUI=300}">
+            <CollectionView.ItemsLayout>
+                <GridItemsLayout Orientation="Vertical" Span="8"/>
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+
+                <DataTemplate>
+                    <VerticalStackLayout
+                            VerticalOptions="Center"
+                            HeightRequest="{OnPlatform Android=50, WinUI=40}"
+                            WidthRequest="{OnPlatform Android=50, WinUI=40}"
+                            Background="{Binding Color}">
+
+                        <Image 
+                                Margin="15"
+                                WidthRequest="{OnPlatform Android=20, WinUI=20}"
+                                HeightRequest="{OnPlatform Android=20,WinUI=20}"
+                                Source="{Binding Pieza.ImageSrc, Mode=TwoWay}"/>
+
+                    </VerticalStackLayout>
+
+
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <Frame
+            CornerRadius="20"
+            Margin="5,5,5,5"
+           >
+            <HorizontalStackLayout
+                Spacing="250">
+                <Label
+                FontSize="25"
+                FontFamily="Bold"
+                Text="Juan"
+                VerticalOptions="Center"
+                HorizontalOptions="Start"/>
+
+                <Label
+                FontSize="25"
+                FontFamily="Bold"
+                Text="12"
+                VerticalOptions="Center"
+                HorizontalOptions="End"/>
+            </HorizontalStackLayout>
+        </Frame>
+
+    </VerticalStackLayout>
+</ContentPage>
