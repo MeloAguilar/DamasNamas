@@ -44,20 +44,13 @@
         </Frame>
 
 
-
-        <CollectionView 
-            VerticalOptions="Center"
-            HorizontalOptions="Center"
-            ItemsSource="{Binding HuecosTablero}"  
-            SelectedItem="{Binding HuecoSeleccinado, Mode=TwoWay}"
-            SelectionMode="Single"
-            HeightRequest="{OnPlatform Android=410, WinUI=350}"
-            WidthRequest="{OnPlatform Android=385, WinUI=300}">
-            <CollectionView.ItemsLayout>
-                <GridItemsLayout Orientation="Vertical" Span="8"/>
-            </CollectionView.ItemsLayout>
-            <CollectionView.ItemTemplate>
-
+        <Grid 
+            BindableLayout.ItemsSource="{Binding HuecosTablero}"
+            HeightRequest="{OnPlatform Android=200}"
+            WidthRequest="{OnPlatform Android=200}"
+            RowDefinitions="*,*,*,*,*,*,*,*"
+            ColumnDefinitions="*,*,*,*,*,*,*,*">
+            <BindableLayout.ItemTemplate>
                 <DataTemplate>
                     <VerticalStackLayout
                             VerticalOptions="Center"
@@ -69,16 +62,51 @@
                                 Margin="15"
                                 WidthRequest="{OnPlatform Android=20, WinUI=20}"
                                 HeightRequest="{OnPlatform Android=20,WinUI=20}"
-                                Source="{Binding Pieza.ImageSrc, Mode=TwoWay}"/>
+                                Source="{Binding Pieza.ImageSrc}"/>
 
                     </VerticalStackLayout>
 
 
                 </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
+            </BindableLayout.ItemTemplate>
+          
 
-        <Frame
+        </Grid>
+        
+        
+            <!--<CollectionView 
+            VerticalOptions="Center"
+            HorizontalOptions="Center"
+            ItemsSource="{Binding HuecosTablero}"  
+            SelectedItem="{Binding HuecoSeleccinado}"
+            SelectionMode="Single"
+            HeightRequest="{OnPlatform Android=410, WinUI=350}"
+            WidthRequest="{OnPlatform Android=385, WinUI=300}">
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout Orientation="Vertical" Span="8"/>
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+
+                    <DataTemplate>
+                        <VerticalStackLayout
+                            VerticalOptions="Center"
+                            HeightRequest="{OnPlatform Android=50, WinUI=40}"
+                            WidthRequest="{OnPlatform Android=50, WinUI=40}"
+                            Background="{Binding Color}">
+
+                            <Image 
+                                Margin="15"
+                                WidthRequest="{OnPlatform Android=20, WinUI=20}"
+                                HeightRequest="{OnPlatform Android=20,WinUI=20}"
+                                Source="{Binding Pieza.ImageSrc}"/>
+
+                        </VerticalStackLayout>
+
+
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>-->
+            <Frame
             CornerRadius="20"
             Margin="5,5,5,5"
            >

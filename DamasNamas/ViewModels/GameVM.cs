@@ -1,7 +1,9 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using DamasNamas.Models;
 using DamasNamas.ViewModels.Utilidades;
 using Entities;
+using Java.Util;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -268,8 +270,8 @@ namespace DamasNamas.ViewModels
 
 
 
-		[RelayCommand]
-		public void GetPosiblePosicion()
+		
+		public async void GetPosiblePosicion()
 		{
 
 			//Comprobamos que haya ficha en el hueco seleccionado
@@ -284,31 +286,83 @@ namespace DamasNamas.ViewModels
 						var list = GetMovimientoPieza(HuecoSeleccinado.PosX, HuecoSeleccinado.PosY, HuecoSeleccinado.Pieza.colorPieza);
 						if (list.Count() == 1)
 						{
-							var eleccion = Shell.Current.DisplayPromptAsync("ActionSheet: Send to?", "Cancel", null, $"x:{list[0].PosX} y:{list[0].PosY}", "Twitter");
+							var eleccion = await Shell.Current.DisplayActionSheet("Mover a?", "Cancel", null, $"x:{list[0].PosX} y:{list[0].PosY}");
+							if(eleccion.Equals($"x:{list[0].PosX} y:{list[0].PosY}"))
+							{
+
+								HuecosTablero.Where(x => x.PosX == list[0].PosX && x.PosY == list[0].PosY).First().Pieza = new clsPieza(HuecoSeleccinado.Pieza.colorPieza, HuecoSeleccinado.Pieza.tipoPieza);
+								HuecoSeleccinado.Pieza = null;
+								HuecoSeleccinado = null;
+								OnPropertyChanged(nameof(HuecoSeleccinado));
+								Estado = EstadosJuego.TurnoNegras;
+							}
 							
 							//Mostramos al usuario las posibles elecciones
 							//Llamamos a una funcion que modifique el tablero segun la eleccion del usuario
 						}
 						else if (list.Count() == 2)
 						{
-							var eleccion = Shell.Current.DisplayPromptAsync("ActionSheet: Send to?", "Cancel", null, $"{list}", "Twitter");
+							var eleccion = Shell.Current.DisplayActionSheet("Mover a?", "Cancel", null, $"x:{list[0].PosX} y:{list[0].PosY}", $"x:{list[1].PosX} y:{list[1].PosY}");
+
+							OnPropertyChanged(nameof(HuecoSeleccinado));
 
 						}
 						else
 						{
-							Shell.Current.DisplayAlert("Eres tonto?", "No ves que la ficha está encerrá?", "LO SIENTO");
+							await Shell.Current.DisplayAlert("Eres tonto?", "No ves que la ficha está encerrá?", "LO SIENTO");
+							HuecoSeleccinado= null;
+						}
+					}
+					else if (HuecoSeleccinado.Pieza.colorPieza.Equals(ColorPieza.Negro) && estado.Equals(EstadosJuego.TurnoNegras))
+					{
+						var list = GetMovimientoPieza(HuecoSeleccinado.PosX, HuecoSeleccinado.PosY, HuecoSeleccinado.Pieza.colorPieza);
+						if (list.Count() == 1)
+						{
+							var eleccion = await Shell.Current.DisplayActionSheet("Mover a?", "Cancel", null, $"x:{list[0].PosX} y:{list[0].PosY}");
+							if (eleccion.Equals($"x:{list[0].PosX} y:{list[0].PosY}"))
+							{
+
+								HuecosTablero.Where(x => x.PosX == list[0].PosX && x.PosY == list[0].PosY).First().Pieza = new clsPieza(HuecoSeleccinado.Pieza.colorPieza, HuecoSeleccinado.Pieza.tipoPieza);
+								HuecoSeleccinado.Pieza = null;
+								HuecoSeleccinado = null;
+								OnPropertyChanged(nameof(HuecoSeleccinado));
+								Estado = EstadosJuego.TurnoBlancas;
+							}
+							else if (eleccion.Equals($"x:{list[1].PosX} y:{list[1].PosY}"))
+							{
+
+								HuecosTablero.Where(x => x.PosX == list[1].PosX && x.PosY == list[1].PosY).First().Pieza = new clsPieza(HuecoSeleccinado.Pieza.colorPieza, HuecoSeleccinado.Pieza.tipoPieza);
+								HuecoSeleccinado.Pieza = null;
+								HuecoSeleccinado = null;
+								OnPropertyChanged(nameof(HuecoSeleccinado));
+								Estado = EstadosJuego.TurnoBlancas;
+							}
+
+							//Mostramos al usuario las posibles elecciones
+							//Llamamos a una funcion que modifique el tablero segun la eleccion del usuario
+						}
+						else if (list.Count() == 2)
+						{
+							var eleccion = Shell.Current.DisplayActionSheet("Mover a?", "Cancel", null, $"x:{list[0].PosX} y:{list[0].PosY}", $"x:{list[1].PosX} y:{list[1].PosY}");
+
+							OnPropertyChanged(nameof(HuecoSeleccinado));
+
+						}
+						else
+						{
+							await Shell.Current.DisplayAlert("Eres tonto?", "No ves que la ficha está encerrá?", "LO SIENTO");
 							HuecoSeleccinado= null;
 						}
 					}
 					else
 					{
-						Shell.Current.DisplayAlert("Eres tonto?", "No toques lo que no es tuyo", "LO SIENTO");
+						await Shell.Current.DisplayAlert("Eres tonto?", "No toques lo que no es tuyo", "LO SIENTO");
 						HuecoSeleccinado= null;
 					}
 				}
 				else
 				{
-					Shell.Current.DisplayAlert("Eres tonto?", "No ves que no hay ficha ?", "LO SIENTO");
+					await Shell.Current.DisplayAlert("Eres tonto?", "No ves que no hay ficha ?", "LO SIENTO");
 					HuecoSeleccinado= null;
 				}
 
