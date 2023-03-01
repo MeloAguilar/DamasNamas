@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DamasNamas.Models
 {
-	public class Square
+	partial class Square : ObservableObject
 	{
 		int posX;
 		int posY;
@@ -14,6 +15,7 @@ namespace DamasNamas.Models
 
 		bool esPosibleMover;
 
+		
 		Color color;
 
 		private clsPieza pieza;
@@ -21,11 +23,14 @@ namespace DamasNamas.Models
 		public clsPieza Pieza
 		{
 			get { return pieza; }
-			set { pieza = value; }
+			set { pieza = value;
+				OnPropertyChanged("Pieza");
+			}
 		}
 
+		public Color ColorFondo { get { return color; } set { color= value; OnPropertyChanged(nameof(ColorFondo)); } }
+
 		public int PosX { get; set; }
-		public Color Color { get => color; set => color = value; }
 		public int PosY { get; set; }
 		public bool EsPosibleMover { get => esPosibleMover; set => esPosibleMover = value; }
 
@@ -38,7 +43,7 @@ namespace DamasNamas.Models
 			PosX=posX;
 			PosY=posY;
 			Pieza = _pieza;
-			Color= color;
+			ColorFondo= color;
 			EsPosibleMover = esposible;
 
 		}
@@ -51,7 +56,7 @@ namespace DamasNamas.Models
 			PosY=posY;
 			Pieza = null;
 			EsPosibleMover=false;
-			Color= color;
+			ColorFondo= color;
 		}
 
 	}

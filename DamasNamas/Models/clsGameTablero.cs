@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DamasNamas.Models
 {
-	public class clsGameTablero
+	partial class clsGameTablero : ObservableObject
 	{
 		public const int FILAS = 8;
 		public const int COLUMNAS = 8;

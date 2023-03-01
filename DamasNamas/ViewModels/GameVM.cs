@@ -24,8 +24,8 @@ namespace DamasNamas.ViewModels
 
 		Square huecoSeleccionado;
 
-
-		public ObservableCollection<Square> HuecosTablero { get; set; }
+		[ObservableProperty]
+		private ObservableCollection<Square> huecosTablero;
 
 		EstadosJuego estado;
 
@@ -74,7 +74,13 @@ namespace DamasNamas.ViewModels
 			{
 				huecoSeleccionado = value;
 				GetPosiblePosicion();
-				OnPropertyChanged(nameof(HuecoSeleccinado));
+				
+				foreach (var hueco in HuecosTablero.Where(x => x.ColorFondo.Equals(Colors.LightPink)))
+				{
+					hueco.ColorFondo = Colors.RosyBrown;
+				}
+				OnPropertyChanged("HuecoSeleccionado");
+				OnPropertyChanged(nameof(HuecosTablero));
 			}
 		}
 
@@ -269,111 +275,141 @@ namespace DamasNamas.ViewModels
 		}
 
 
-
+		
 		
 		public async void GetPosiblePosicion()
 		{
-
-			//Comprobamos que haya ficha en el hueco seleccionado
-			//Comprobamos que la ficha sea blanca y que el turno sea de las blancas
-			if (HuecoSeleccinado != null)
+			if(HuecoSeleccinado.Pieza.colorPieza.Equals(ColorPieza.Blanco) && Estado.Equals(EstadosJuego.TurnoBlancas)) 
 			{
-				if (HuecoSeleccinado.Pieza != null)
+				var listaPosibles = GetMovimientoPieza(HuecoSeleccinado.PosX, HuecoSeleccinado.PosY, ColorPieza.Blanco);
+				foreach (var huec in listaPosibles)
 				{
-					if (HuecoSeleccinado.Pieza.colorPieza.Equals(ColorPieza.Blanco) && estado.Equals(EstadosJuego.TurnoBlancas))
-					{
-						//Devolvemos la lista de huecos posibles
-						var list = GetMovimientoPieza(HuecoSeleccinado.PosX, HuecoSeleccinado.PosY, HuecoSeleccinado.Pieza.colorPieza);
-						if (list.Count() == 1)
-						{
-							var eleccion = await Shell.Current.DisplayActionSheet("Mover a?", "Cancel", null, $"x:{list[0].PosX} y:{list[0].PosY}");
-							if(eleccion.Equals($"x:{list[0].PosX} y:{list[0].PosY}"))
-							{
-
-								HuecosTablero.Where(x => x.PosX == list[0].PosX && x.PosY == list[0].PosY).First().Pieza = new clsPieza(HuecoSeleccinado.Pieza.colorPieza, HuecoSeleccinado.Pieza.tipoPieza);
-								HuecoSeleccinado.Pieza = null;
-								HuecoSeleccinado = null;
-								OnPropertyChanged(nameof(HuecoSeleccinado));
-								Estado = EstadosJuego.TurnoNegras;
-							}
-							
-							//Mostramos al usuario las posibles elecciones
-							//Llamamos a una funcion que modifique el tablero segun la eleccion del usuario
-						}
-						else if (list.Count() == 2)
-						{
-							var eleccion = Shell.Current.DisplayActionSheet("Mover a?", "Cancel", null, $"x:{list[0].PosX} y:{list[0].PosY}", $"x:{list[1].PosX} y:{list[1].PosY}");
-
-							OnPropertyChanged(nameof(HuecoSeleccinado));
-
-						}
-						else
-						{
-							await Shell.Current.DisplayAlert("Eres tonto?", "No ves que la ficha está encerrá?", "LO SIENTO");
-							HuecoSeleccinado= null;
-						}
-					}
-					else if (HuecoSeleccinado.Pieza.colorPieza.Equals(ColorPieza.Negro) && estado.Equals(EstadosJuego.TurnoNegras))
-					{
-						var list = GetMovimientoPieza(HuecoSeleccinado.PosX, HuecoSeleccinado.PosY, HuecoSeleccinado.Pieza.colorPieza);
-						if (list.Count() == 1)
-						{
-							var eleccion = await Shell.Current.DisplayActionSheet("Mover a?", "Cancel", null, $"x:{list[0].PosX} y:{list[0].PosY}");
-							if (eleccion.Equals($"x:{list[0].PosX} y:{list[0].PosY}"))
-							{
-
-								HuecosTablero.Where(x => x.PosX == list[0].PosX && x.PosY == list[0].PosY).First().Pieza = new clsPieza(HuecoSeleccinado.Pieza.colorPieza, HuecoSeleccinado.Pieza.tipoPieza);
-								HuecoSeleccinado.Pieza = null;
-								HuecoSeleccinado = null;
-								OnPropertyChanged(nameof(HuecoSeleccinado));
-								Estado = EstadosJuego.TurnoBlancas;
-							}
-							else if (eleccion.Equals($"x:{list[1].PosX} y:{list[1].PosY}"))
-							{
-
-								HuecosTablero.Where(x => x.PosX == list[1].PosX && x.PosY == list[1].PosY).First().Pieza = new clsPieza(HuecoSeleccinado.Pieza.colorPieza, HuecoSeleccinado.Pieza.tipoPieza);
-								HuecoSeleccinado.Pieza = null;
-								HuecoSeleccinado = null;
-								OnPropertyChanged(nameof(HuecoSeleccinado));
-								Estado = EstadosJuego.TurnoBlancas;
-							}
-
-							//Mostramos al usuario las posibles elecciones
-							//Llamamos a una funcion que modifique el tablero segun la eleccion del usuario
-						}
-						else if (list.Count() == 2)
-						{
-							var eleccion = Shell.Current.DisplayActionSheet("Mover a?", "Cancel", null, $"x:{list[0].PosX} y:{list[0].PosY}", $"x:{list[1].PosX} y:{list[1].PosY}");
-
-							OnPropertyChanged(nameof(HuecoSeleccinado));
-
-						}
-						else
-						{
-							await Shell.Current.DisplayAlert("Eres tonto?", "No ves que la ficha está encerrá?", "LO SIENTO");
-							HuecoSeleccinado= null;
-						}
-					}
-					else
-					{
-						await Shell.Current.DisplayAlert("Eres tonto?", "No toques lo que no es tuyo", "LO SIENTO");
-						HuecoSeleccinado= null;
-					}
+					huec.ColorFondo = Colors.LightPink;
 				}
-				else
-				{
-					await Shell.Current.DisplayAlert("Eres tonto?", "No ves que no hay ficha ?", "LO SIENTO");
-					HuecoSeleccinado= null;
-				}
-
-
-
+				
 			}
-
-
 		}
+		////Comprobamos que haya ficha en el hueco seleccionado
+		////Comprobamos que la ficha sea blanca y que el turno sea de las blancas
+		//if (HuecoSeleccinado != null)
+		//{
+		//	if (HuecoSeleccinado.Pieza != null)
+		//	{
+		//		if (HuecoSeleccinado.Pieza.colorPieza.Equals(ColorPieza.Blanco) && estado.Equals(EstadosJuego.TurnoBlancas))
+		//		{
+		//			//Devolvemos la lista de huecos posibles
+		//			var list = GetMovimientoPieza(HuecoSeleccinado.PosX, HuecoSeleccinado.PosY, HuecoSeleccinado.Pieza.colorPieza);
+		//			if (list.Count() == 1)
+		//			{
+		//				var eleccion = await Shell.Current.DisplayActionSheet("Mover a?", "Cancel", null, $"x:{list[0].PosX} y:{list[0].PosY}");
+		//				if(eleccion.Equals($"x:{list[0].PosX} y:{list[0].PosY}"))
+		//				{
+
+		//					HuecosTablero.Where(x => x.PosX == list[0].PosX && x.PosY == list[0].PosY).First().Pieza = new clsPieza(HuecoSeleccinado.Pieza.colorPieza, HuecoSeleccinado.Pieza.esReina);
+
+		//					HuecoSeleccinado.Pieza = null;
+		//					HuecoSeleccinado = null;
+		//					OnPropertyChanged(nameof(HuecosTablero));
+		//					OnPropertyChanged(nameof(HuecoSeleccinado.Pieza));
+		//					Estado = EstadosJuego.TurnoNegras;
+		//				}
+
+		//				//Mostramos al usuario las posibles elecciones
+		//				//Llamamos a una funcion que modifique el tablero segun la eleccion del usuario
+		//			}
+		//			else if (list.Count() == 2)
+		//			{
+		//				var eleccion = Shell.Current.DisplayActionSheet("Mover a?", "Cancel", null, $"x:{list[0].PosX} y:{list[0].PosY}", $"x:{list[1].PosX} y:{list[1].PosY}");
+
+		//				OnPropertyChanged(nameof(HuecosTablero));
+
+		//			}
+		//			else
+		//			{
+		//				await Shell.Current.DisplayAlert("Eres tonto?", "No ves que la ficha está encerrá?", "LO SIENTO");
+		//				HuecoSeleccinado= null;
+		//			}
+		//		}
+
+
+
+		//		else if (HuecoSeleccinado.Pieza.colorPieza.Equals(ColorPieza.Negro) && estado.Equals(EstadosJuego.TurnoNegras))
+		//		{
+		//			var list = GetMovimientoPieza(HuecoSeleccinado.PosX, HuecoSeleccinado.PosY, HuecoSeleccinado.Pieza.colorPieza);
+		//			if (list.Count() == 1)
+		//			{
+		//				var eleccion = await Shell.Current.DisplayActionSheet("Mover a?", "Cancel", null, $"x:{list[0].PosX} y:{list[0].PosY}");
+		//				if (eleccion.Equals($"x:{list[0].PosX} y:{list[0].PosY}"))
+		//				{
+
+		//					HuecosTablero.Where(x => x.PosX == list[0].PosX && x.PosY == list[0].PosY).First().Pieza = new clsPieza(HuecoSeleccinado.Pieza.colorPieza, HuecoSeleccinado.Pieza.esReina);
+		//					HuecoSeleccinado.Pieza = null;
+		//					HuecoSeleccinado = null;
+		//					OnPropertyChanged(nameof(HuecosTablero));
+		//					Estado = EstadosJuego.TurnoBlancas;
+		//				}
+		//				else if (eleccion.Equals($"x:{list[1].PosX} y:{list[1].PosY}"))
+		//				{
+
+		//					HuecosTablero.Where(x => x.PosX == list[1].PosX && x.PosY == list[1].PosY).First().Pieza = new clsPieza(HuecoSeleccinado.Pieza.colorPieza, HuecoSeleccinado.Pieza.esReina);
+		//					HuecoSeleccinado.Pieza = null;
+		//					HuecoSeleccinado = null;
+		//					OnPropertyChanged(nameof(HuecosTablero));
+		//					Estado = EstadosJuego.TurnoBlancas;
+		//				}
+
+		//				//Mostramos al usuario las posibles elecciones
+		//				//Llamamos a una funcion que modifique el tablero segun la eleccion del usuario
+		//			}
+		//			else if (list.Count() == 2)
+		//			{
+		//				var eleccion = Shell.Current.DisplayActionSheet("Mover a?", "Cancel", null, $"x:{list[0].PosX} y:{list[0].PosY}", $"x:{list[1].PosX} y:{list[1].PosY}");
+		//				if (eleccion.Equals($"x:{list[0].PosX} y:{list[0].PosY}"))
+		//				{
+
+		//					HuecosTablero.Where(x => x.PosX == list[0].PosX && x.PosY == list[0].PosY).First().Pieza = new clsPieza(HuecoSeleccinado.Pieza.colorPieza, HuecoSeleccinado.Pieza.esReina);
+		//					HuecoSeleccinado.Pieza = null;
+		//					HuecoSeleccinado = null;
+		//					OnPropertyChanged(nameof(HuecosTablero));
+		//					Estado = EstadosJuego.TurnoBlancas;
+		//				}
+		//				else if (eleccion.Equals($"x:{list[1].PosX} y:{list[1].PosY}"))
+		//				{
+
+		//					HuecosTablero.Where(x => x.PosX == list[1].PosX && x.PosY == list[1].PosY).First().Pieza = new clsPieza(HuecoSeleccinado.Pieza.colorPieza, HuecoSeleccinado.Pieza.esReina);
+		//					HuecoSeleccinado.Pieza = null;
+		//					HuecoSeleccinado = null;
+		//					OnPropertyChanged(nameof(HuecosTablero));
+		//					Estado = EstadosJuego.TurnoBlancas;
+		//				}
+		//				OnPropertyChanged(nameof(HuecosTablero));
+
+		//			}
+		//			else
+		//			{
+		//				await Shell.Current.DisplayAlert("Eres tonto?", "No ves que la ficha está encerrá?", "LO SIENTO");
+		//				HuecoSeleccinado= null;
+		//			}
+		//		}
+		//		else
+		//		{
+		//			await Shell.Current.DisplayAlert("Eres tonto?", "No toques lo que no es tuyo", "LO SIENTO");
+		//			HuecoSeleccinado= null;
+		//		}
+		//	}
+		//	else
+		//	{
+		//		await Shell.Current.DisplayAlert("Eres tonto?", "No ves que no hay ficha ?", "LO SIENTO");
+		//		HuecoSeleccinado= null;
+		//	}
+
+
+
+
+
 
 	}
+
 
 
 	#region Comandos

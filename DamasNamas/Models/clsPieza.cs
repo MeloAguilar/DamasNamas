@@ -1,36 +1,46 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace DamasNamas.Models
 {
-	public class clsPieza
+	partial class clsPieza : ObservableObject
 	{
-
-		public String ImageSrc { get; set; }
+		private String imageSrc;
 		public ColorPieza colorPieza { get; set; }
-		public Tipo tipoPieza { get; set; }
+		public bool esReina { get; set; }
 
-		public clsPieza(ColorPieza colorP, Tipo tipo)
+		public String ImageSrc
+		{
+			get => imageSrc;
+			set { imageSrc = value; OnPropertyChanged(nameof(ImageSrc)); }
+		}
+
+
+		public clsPieza(ColorPieza colorP, bool tipo)
 		{
 			colorPieza = colorP;
-			tipoPieza = tipo;
-			if (colorPieza.Equals(ColorPieza.Blanco))
+			esReina = tipo;
+			if (colorPieza.Equals(ColorPieza.Blanco) && !tipo)
 			{
 				ImageSrc = "piezablanca.png";
 			}
-			else
+			else if (colorPieza.Equals(ColorPieza.Negro) && !tipo)
 			{
 				ImageSrc = "piezanegra.png";
+			}
+			else if (colorPieza.Equals(ColorPieza.Blanco) && tipo)
+			{
+				ImageSrc = "reinablanca.png";
+			}
+			else if (colorPieza.Equals(ColorPieza.Negro) && tipo)
+			{
+				ImageSrc = "reinanegra.png";
 			}
 		}
 
 		public clsPieza(ColorPieza colorP)
 		{
 			colorPieza = colorP;
-			tipoPieza = Tipo.Normal;
+			esReina = false;
 			if (colorPieza.Equals(ColorPieza.Blanco))
 			{
 				ImageSrc = "piezablanca.png";
