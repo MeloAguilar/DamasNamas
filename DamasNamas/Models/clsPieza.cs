@@ -51,6 +51,14 @@ namespace DamasNamas.Models
 			}
 		}
 
+		//Constructor copia
+		public clsPieza(clsPieza pieza)
+		{
+			colorPieza = pieza.colorPieza;
+			esReina = pieza.esReina;
+			ImageSrc = pieza.ImageSrc;
+		}
+
 	}
 
 	public enum ColorPieza

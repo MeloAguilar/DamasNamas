@@ -23,16 +23,25 @@ namespace DamasNamas.Models
 		public clsPieza Pieza
 		{
 			get { return pieza; }
-			set { pieza = value;
+			set { 
+				pieza = value;
 				OnPropertyChanged("Pieza");
 			}
 		}
+
+
 
 		public Color ColorFondo { get { return color; } set { color= value; OnPropertyChanged(nameof(ColorFondo)); } }
 
 		public int PosX { get; set; }
 		public int PosY { get; set; }
-		public bool EsPosibleMover { get => esPosibleMover; set => esPosibleMover = value; }
+		public bool EsPosibleMover { get => esPosibleMover; 
+			set 
+			{ 
+				esPosibleMover = value; 
+				OnPropertyChanged("Pieza"); 
+			} 
+		}
 
 
 
@@ -58,6 +67,17 @@ namespace DamasNamas.Models
 			EsPosibleMover=false;
 			ColorFondo= color;
 		}
+
+		//Constructor copia
+		public Square(Square _square)
+		{
+			PosX=_square.PosX;
+			PosY=_square.PosY;
+			Pieza = _square.Pieza;
+			EsPosibleMover=_square.EsPosibleMover;
+			ColorFondo= _square.ColorFondo;
+		}
+		
 
 	}
 }
