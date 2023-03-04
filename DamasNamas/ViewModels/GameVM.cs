@@ -4,6 +4,7 @@ using DamasNamas.Models;
 using DamasNamas.ViewModels.Utilidades;
 using Entities;
 using System.Collections.ObjectModel;
+using System.Linq.Expressions;
 using System.Windows.Input;
 
 namespace DamasNamas.ViewModels
@@ -208,11 +209,24 @@ namespace DamasNamas.ViewModels
 
 			//Si la pieza seleccionada anteriormente es blanca se sumará uno, sino, se restará a la 
 			//posicion que buscaremos en x
-			if (HuecoSeleccinado.TipoPieza.Equals(ColorPieza.Blanca))
-				posibleX += 1;
+			if (!HuecoSeleccinado.EsReina)
+			{
+				if (HuecoSeleccinado.TipoPieza.Equals(ColorPieza.Blanca))
+					posibleX += 1;
+				else
+					posibleX -= 1;
+			}
 			else
-				posibleX -= 1;
-
+			{
+				if (hueco.PosX > HuecoSeleccinado.PosX)
+				{
+					posibleX +=1;
+				}
+				else
+				{
+					posibleX -=1;
+				}
+			}
 			//Recogemos el hueco del tablero
 			if (posibleX >= 0 && posibleX < 8 && posibleY >= 0 && posibleY < 8)
 			{
@@ -233,9 +247,91 @@ namespace DamasNamas.ViewModels
 
 
 
-		private List<Square> GetMovimientoReina()
+		private ObservableCollection<Square> GetMovimientoReina()
 		{
-			return null;
+
+			int fila = HuecoSeleccinado.PosX;
+			int columna = HuecoSeleccinado.PosY;
+			var posibleXmayor = fila+1;
+			var posibleXmenor = fila-1;
+			var posibleYmayor = columna+1;
+			var posibleYmenor = columna-1;
+
+
+
+
+
+			//Recogemos los cuatro huecos diagonales
+
+
+
+
+
+			ColorPieza colorPieza = HuecoSeleccinado.TipoPieza;
+			var listaPosibles = new ObservableCollection<Square>();
+			//Busco los huecos que coincidan con las posiciones posibles
+
+			var recogidos = HuecosTablero.Where(x =>
+			((x.PosX == posibleXmenor) || (x.PosX == posibleXmayor))
+			&&
+			(x.PosY == posibleYmayor || x.PosY == posibleYmenor));
+
+			foreach (var i in recogidos)
+			{
+				listaPosibles.Add(i);
+			}
+
+
+
+			var backupList = new List<Square>(listaPosibles);
+
+			try
+			{
+
+				foreach (var hueco in listaPosibles)
+				{
+					//Si el hueco no está vacío habrá que comprobar si la pieza que hay en él es del color contrario
+					//Si lo es, habrá que comprobar si la casilla siguiente está vacía
+					//Si está vacía, habrá que preguntar al jugador si desea comer la pieza y moverse a esa casilla
+					//Si no está vacía, no se mostrará como opción
+
+					//Comer pieza si la pieza del hueco es del otro color
+					if (!hueco.TipoPieza.Equals(colorPieza) && !hueco.TipoPieza.Equals(ColorPieza.None))
+					{
+						//Llamar a otro método que compruebe si la casilla siguiente está vacía
+						//var posibleComida = Tablero.Huecos.Find(x => x.PosX == posibleX + 1 && x.PosY == PosibleYmayor + 1 || x.PosY == posibleYmenor - 1);
+
+						var huequitoacomprobar = Huecomida(hueco);
+
+						if (huequitoacomprobar != null)
+							backupList.Add(huequitoacomprobar);
+						backupList.Remove(hueco);
+					}
+					//Se elimina la pieza si es del mismo color
+					else if (hueco.TipoPieza.Equals(colorPieza))
+					{
+						backupList.Remove(hueco);
+					}
+					else if (hueco.TipoPieza.Equals(ColorPieza.None))
+					{
+
+					}
+					//Si la casilla está vacía se seguirá tomando como opción
+
+				}
+
+
+
+			}
+			catch (Exception e)
+			{
+
+			}
+
+
+			listaPosibles = new ObservableCollection<Square>(backupList);
+
+			return listaPosibles;
 		}
 
 
@@ -249,15 +345,15 @@ namespace DamasNamas.ViewModels
 		/// <param name="columna"></param>
 		/// <param name="colorPieza"></param>
 		/// <returns></returns>
-		private List<Square> GetMovimientoPieza(int fila, int columna, ColorPieza colorPieza)
+		private List<Square> GetMovimientoPieza()
 		{
 
 			//Recojo los unicos dos movimientos posibles (en principio) en las Damas
-			var posibleX = fila;
-			var PosibleYmayor = columna+1;
-			var posibleYmenor = columna-1;
+			var posibleX = HuecoSeleccinado.PosX;
+			var PosibleYmayor = HuecoSeleccinado.PosY+1;
+			var posibleYmenor = HuecoSeleccinado.PosY-1;
 			//Si la pieza es blanca, sumaré 1 a la fila, si es negra restaré 1
-
+			ColorPieza colorPieza = HuecoSeleccinado.TipoPieza;
 			if (colorPieza.Equals(ColorPieza.Blanca))
 				posibleX += 1;
 			else
@@ -320,59 +416,80 @@ namespace DamasNamas.ViewModels
 		public void GetPosiblePosicion()
 		{
 
-		
-				//Si ya había huecos en la lista de posibles huecos, se volverán a poner de color normal
-				if (ListaPosiblesHuecos != null)
-					ModificarColorHuecos("lightynone");
-				//Si HuecoAnterior es null sé que es la primera selección de hueco
-				//Si es la primera selección de hueco, se comprueba que el hueco seleccionado tenga pieza
-				if (HuecoAnterior == null && (HuecoSeleccinado.TipoPieza.Equals(ColorPieza.Blanca) || HuecoSeleccinado.TipoPieza.Equals(ColorPieza.Negra)))
+
+			//Si ya había huecos en la lista de posibles huecos, se volverán a poner de color normal
+			if (ListaPosiblesHuecos != null)
+				ModificarColorHuecos("lightynone");
+			//Si HuecoAnterior es null sé que es la primera selección de hueco
+			//Si es la primera selección de hueco, se comprueba que el hueco seleccionado tenga pieza
+			if (HuecoAnterior == null && (HuecoSeleccinado.TipoPieza.Equals(ColorPieza.Blanca) || HuecoSeleccinado.TipoPieza.Equals(ColorPieza.Negra)))
+			{
+
+
+				if ((HuecoSeleccinado.TipoPieza.Equals(ColorPieza.Blanca) && Estado.Equals(EstadosJuego.TurnoBlancas)) || (HuecoSeleccinado.TipoPieza.Equals(ColorPieza.Negra) && Estado.Equals(EstadosJuego.TurnoNegras)))
 				{
-					if ((HuecoSeleccinado.TipoPieza.Equals(ColorPieza.Blanca) && Estado.Equals(EstadosJuego.TurnoBlancas)) || (HuecoSeleccinado.TipoPieza.Equals(ColorPieza.Negra) && Estado.Equals(EstadosJuego.TurnoNegras)))
+					if (!HuecoSeleccinado.EsReina)
 					{
-						ListaPosiblesHuecos = new ObservableCollection<Square>(GetMovimientoPieza(HuecoSeleccinado.PosX, HuecoSeleccinado.PosY, HuecoSeleccinado.TipoPieza));
+						ListaPosiblesHuecos = new ObservableCollection<Square>(GetMovimientoPieza());
 
-						ModificarColorHuecos("selected");
 
-						HuecoAnterior = new(HuecoSeleccinado);
 
 					}
+					else
+					{
+						try
+						{
+							ListaPosiblesHuecos = new ObservableCollection<Square>(GetMovimientoReina());
+						}
+						catch (Exception ex)
+						{
+							throw ex;
+						}
+
+
+					}
+					ModificarColorHuecos("selected");
+
+					HuecoAnterior = new(HuecoSeleccinado);
 				}
-				//Si el hueco anterior no es null, significa que ya se ha seleccionado una pieza
-				//por lo que si el hueco que acabamos de seleccionar nu contiene ninguna pieza
-				//se moverá la pieza del hueco anterior a este
-				else if ((HuecoAnterior.TipoPieza.Equals(ColorPieza.Blanca) || HuecoAnterior.TipoPieza.Equals(ColorPieza.Negra)) && !(HuecoSeleccinado.TipoPieza.Equals(ColorPieza.Blanca) || HuecoSeleccinado.TipoPieza.Equals(ColorPieza.Negra)))
+
+
+			}
+			//Si el hueco anterior no es null, significa que ya se ha seleccionado una pieza
+			//por lo que si el hueco que acabamos de seleccionar nu contiene ninguna pieza
+			//se moverá la pieza del hueco anterior a este
+			else if (HuecoAnterior != null && (HuecoAnterior.TipoPieza.Equals(ColorPieza.Blanca) || HuecoAnterior.TipoPieza.Equals(ColorPieza.Negra)) && !(HuecoSeleccinado.TipoPieza.Equals(ColorPieza.Blanca) || HuecoSeleccinado.TipoPieza.Equals(ColorPieza.Negra)))
+			{
+				bool esPosible;
+				try
 				{
-					bool esPosible;
-					try
-					{
-						var huecomprobar = ListaPosiblesHuecos.Where(x => x.PosX == HuecoSeleccinado.PosX && x.PosY == HuecoSeleccinado.PosY).First();
-						esPosible = true;
-					}
-					catch (Exception e)
-					{
-						esPosible = false;
-					}
-					if (esPosible)
-					{
-						MovePieza();
-
-					}
-
-
+					var huecomprobar = ListaPosiblesHuecos.Where(x => x.PosX == HuecoSeleccinado.PosX && x.PosY == HuecoSeleccinado.PosY).First();
+					esPosible = true;
 				}
-				//Si el hueco anterior no es null, significa que ya se ha seleccionado una pieza
-				//Por lo que la borraremos y haremos una llamada recursiva 
-				//ya que ahora si entrará en el primer 'if'
-				else if ((HuecoSeleccinado.TipoPieza.Equals(ColorPieza.Blanca) || HuecoSeleccinado.TipoPieza.Equals(ColorPieza.Negra)) && (HuecoAnterior.TipoPieza.Equals(ColorPieza.Blanca) || HuecoAnterior.TipoPieza.Equals(ColorPieza.Negra)))
+				catch (Exception e)
 				{
-					if ((HuecoSeleccinado.TipoPieza.Equals(ColorPieza.Blanca) && Estado.Equals(EstadosJuego.TurnoBlancas)) || (HuecoSeleccinado.TipoPieza.Equals(ColorPieza.Negra) && Estado.Equals(EstadosJuego.TurnoNegras)))
-					{
-						HuecoAnterior = null;
-						GetPosiblePosicion();
-					}
+					esPosible = false;
 				}
-			
+				if (esPosible)
+				{
+					MovePieza();
+
+				}
+
+
+			}
+			//Si el hueco anterior no es null, significa que ya se ha seleccionado una pieza
+			//Por lo que la borraremos y haremos una llamada recursiva 
+			//ya que ahora si entrará en el primer 'if'
+			else if ((HuecoSeleccinado.TipoPieza.Equals(ColorPieza.Blanca) || HuecoSeleccinado.TipoPieza.Equals(ColorPieza.Negra)) && (HuecoAnterior.TipoPieza.Equals(ColorPieza.Blanca) || HuecoAnterior.TipoPieza.Equals(ColorPieza.Negra)))
+			{
+				if ((HuecoSeleccinado.TipoPieza.Equals(ColorPieza.Blanca) && Estado.Equals(EstadosJuego.TurnoBlancas)) || (HuecoSeleccinado.TipoPieza.Equals(ColorPieza.Negra) && Estado.Equals(EstadosJuego.TurnoNegras)))
+				{
+					HuecoAnterior = null;
+					GetPosiblePosicion();
+				}
+			}
+
 		}
 
 
@@ -441,8 +558,8 @@ namespace DamasNamas.ViewModels
 			}
 		}
 
-		
-		
+
+
 
 
 		/// <summary>
@@ -452,8 +569,19 @@ namespace DamasNamas.ViewModels
 		{
 			try
 			{
+				var hueco = ListaPosiblesHuecos
+					.Where(x => x.PosX == HuecoSeleccinado.PosX && x.PosY == HuecoSeleccinado.PosY)
+					.First();
+				hueco.Pieza = HuecoAnterior.Pieza;
+				hueco.EsReina = HuecoAnterior.EsReina;
 
-				
+
+				HuecosTablero
+			   .Where(x => x.PosX == HuecoAnterior.PosX && x.PosY == HuecoAnterior.PosY)
+			   .First().Pieza = "lightynone";
+
+				TransformarReina();
+
 				//Comerpieza
 				if (!Comer() || (Comer() && ListaPosiblesHuecos.Count == 0))
 				{
@@ -462,17 +590,9 @@ namespace DamasNamas.ViewModels
 				//Busco el hueco seleccionado entre la lista de posibles movimientos y, solo si existe
 				//en esta lista, se añadirá una pieza a este y se eliminara del hueco de los huecos del tablero
 				//la pieza del hueco que coincida con PiezaAnterior
-				ListaPosiblesHuecos
-				.Where(x => x.PosX == HuecoSeleccinado.PosX && x.PosY == HuecoSeleccinado.PosY)
-				.First()
-				.Pieza = HuecoAnterior.Pieza;
 
 
-				HuecosTablero
-			   .Where(x => x.PosX == HuecoAnterior.PosX && x.PosY == HuecoAnterior.PosY)
-			   .First().Pieza = "lightynone";
 
-TransformarReina();
 
 
 
@@ -505,25 +625,27 @@ TransformarReina();
 		{
 			var difY = Math.Sign(HuecoSeleccinado.PosY - HuecoAnterior.PosY);
 			var haComido = false;
-			if (Estado.Equals(EstadosJuego.TurnoBlancas) && (HuecoSeleccinado.PosX > HuecoAnterior.PosX+1))
+			if (!HuecoSeleccinado.EsReina)
 			{
+				if (Estado.Equals(EstadosJuego.TurnoBlancas) && (HuecoSeleccinado.PosX > HuecoAnterior.PosX+1))
+				{
 
-				var huecomido = HuecosTablero
-					.Where(
-					x =>
-					((x.PosX > HuecoAnterior.PosX) && (x.PosX < HuecoSeleccinado.PosX))
-					&&
-					(x.PosY == HuecoAnterior.PosY+difY))
-					.First();
-				huecomido.Pieza = "lightynone";
+					var huecomido = HuecosTablero
+						.Where(
+						x =>
+						((x.PosX > HuecoAnterior.PosX) && (x.PosX < HuecoSeleccinado.PosX))
+						&&
+						(x.PosY == HuecoAnterior.PosY+difY))
+						.First();
+					huecomido.Pieza = "lightynone";
 
-				Tablero.PiezasNegras--;
-				haComido = true;
-			}
-			else if (Estado.Equals(EstadosJuego.TurnoNegras) && (HuecoSeleccinado.PosX < HuecoAnterior.PosX-1))
-			{
+					Tablero.PiezasNegras--;
+					haComido = true;
+				}
+				else if (Estado.Equals(EstadosJuego.TurnoNegras) && (HuecoSeleccinado.PosX < HuecoAnterior.PosX-1))
+				{
 
-				
+
 					var huecomido = HuecosTablero
 						.Where(
 						x =>
@@ -535,7 +657,37 @@ TransformarReina();
 
 					Tablero.PiezasBlancas--;
 					haComido = true;
+
+				}
+			}
+			else
+			{
+				if(difY > 0 && (HuecoSeleccinado.PosX < HuecoAnterior.PosX) || (HuecoSeleccinado.PosX > HuecoAnterior.PosX))
+				{
+					var huecomido = HuecosTablero
+					.Where(
+					x =>
+					((x.PosX < HuecoAnterior.PosX) && (x.PosX > HuecoSeleccinado.PosX))
+					&&
+					(x.PosY == HuecoAnterior.PosY+difY))
+					.First();
+					huecomido.Pieza = "lightynone";
+				}
+				else if(difY < 0 && (HuecoSeleccinado.PosX < HuecoAnterior.PosX-1))
+				{
+					var huecomido = HuecosTablero
+					.Where(
+					x =>
+					((x.PosX < HuecoAnterior.PosX) && (x.PosX > HuecoSeleccinado.PosX))
+					&&
+					(x.PosY == HuecoAnterior.PosY+difY))
+					.First();
+					huecomido.Pieza = "lightynone";
+				}
 				
+
+				Tablero.PiezasNegras--;
+				haComido = true;
 			}
 			return haComido;
 		}
