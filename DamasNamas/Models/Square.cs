@@ -33,11 +33,11 @@ namespace DamasNamas.Models
 		{
 			get { return pieza; }
 			set { 
-				if(value == "piezablanca")
+				if(value == "piezablanca" || value == "reinablanca")
 				{
 					TipoPieza = ColorPieza.Blanca;
 				}
-				else if(value == "piezanegra")
+				else if(value == "piezanegra" || value == "reinanegra")
 				{
 					TipoPieza = ColorPieza.Negra;
 				}
@@ -92,6 +92,7 @@ namespace DamasNamas.Models
 			PosY=posY;
 			Pieza = "";
 			ColorFondo= color;
+			esReina = false;
 		}
 
 		//Constructor copia
@@ -101,6 +102,7 @@ namespace DamasNamas.Models
 			PosY=_square.PosY;
 			Pieza = _square.Pieza;
 			ColorFondo= _square.ColorFondo;
+			esReina = _square.EsReina;
 		}
 		
 
