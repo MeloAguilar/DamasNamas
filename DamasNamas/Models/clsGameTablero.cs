@@ -14,9 +14,9 @@ namespace DamasNamas.Models
 
 		List<Square> huecos;
 
-		clsPieza[] piezasBlancas;
+		String[] piezasBlancas;
 
-		clsPieza[] piezasNegras;
+		String[] piezasNegras;
 
 		long tiempo;
 
@@ -25,13 +25,13 @@ namespace DamasNamas.Models
 			get => huecos;
 			set => huecos = value;
 		}
-		public clsPieza[] PiezasBlancas
+		public String[] PiezasBlancas
 		{
 			get => piezasBlancas;
 			set => piezasBlancas = value;
 		}
 
-		public clsPieza[] PiezasNegras
+		public String[] PiezasNegras
 		{
 			get => piezasNegras;
 			set => piezasNegras = value;
@@ -52,113 +52,176 @@ namespace DamasNamas.Models
 
 		private void CreatePiezas()
 		{
-			PiezasBlancas = new clsPieza[12];
-			PiezasNegras = new clsPieza[12];
+			PiezasBlancas = new String[12];
+			PiezasNegras = new String[12];
 			for (int i = 0; i < 12; i++)
 			{
-				PiezasBlancas[i] = new clsPieza(ColorPieza.Blanco);
-				PiezasNegras[i] = new clsPieza(ColorPieza.Negro);
+				PiezasBlancas[i] = "piezablanca";
+				PiezasNegras[i] = "piezanegra";
 			}
 		}
+
 
 
 
 		void SetUpPiezas()
-		{//Conteo de piezas
+		{
 			var contadorPB = 0;
 			var contadorPN = 0;
+
 			Huecos = new List<Square>();
-			for (int i = 0; i <FILAS; i++)
+			for (int fila = 0; fila<FILAS; fila++)
 			{
-				for (int j = 0; j < COLUMNAS; j++)
+				for (int columna = 0; columna < COLUMNAS; columna++)
 				{
-
-					//Si la pieza está en una de las dos primeras lineas no podrá mopverse, ya que tiene una pieza propia delante
-					if (i < 2)
+					if (fila < 3)
 					{
-
-						if ((i%2!=0 && j%2!=0) || (i%2==0 && j%2==0))
+						if ((fila%2==0 && columna%2==0) || (fila%2!=0 && columna%2!=0))
 						{
-
-							Huecos.Add(new Square(i, j, PiezasBlancas[contadorPB], Colors.SandyBrown, false));
+							Huecos.Add(new Square(fila, columna, PiezasBlancas[contadorPB], "lightynone"));
 							contadorPB++;
 						}
 						else
 						{
-
-							Huecos.Add(new Square(i, j, null, Colors.SaddleBrown, false));
+							Huecos.Add(new Square(fila, columna, "shadynone", "shadynone"));
 						}
-
-
-						//En la tercera linea las piezas no tendrán ninguna delante por lo que podrán moverse
 					}
-					else if (i == 2)
+					else if (fila == 3)
 					{
-						if ((i%2!=0 && j%2!=0) || (i%2==0 && j%2==0))
+						if (columna%2==0)
 						{
+							Huecos.Add(new Square(fila, columna, "shadynone", "shadynone"));
 
-							Huecos.Add(new Square(i, j, PiezasBlancas[contadorPB], Colors.SandyBrown, true));
-							contadorPB++;
 						}
 						else
 						{
+							Huecos.Add(new Square(fila, columna, "lightynone", "lightynone"));
 
-							Huecos.Add(new Square(i, j, null, Colors.SaddleBrown, false));
 						}
-
 					}
-					else if (i == 3 && j%2 ==0)
+					else if (fila == 4)
 					{
-						Huecos.Add(new Square(i, j, null, Colors.SaddleBrown, false));
-					}
-					else if (i == 3 && j%2 !=0)
-					{
-						Huecos.Add(new Square(i, j, null, Colors.SandyBrown, false));
-					}
-					else if (i == 4 && j%2 !=0)
-					{
-						Huecos.Add(new Square(i, j, null, Colors.SaddleBrown, false));
-					}
-					else if (i == 4 && j%2 ==0)
-					{
-						Huecos.Add(new Square(i, j, null, Colors.SandyBrown, false));
-					}
-
-					//Igual que el anterior pero al contrario, ya que es para el jugador de arriba
-					else if (i > 5 && i < 8)
-					{
-						if ((i%2!=0 && j%2!=0) || (i%2==0 && j%2==0))
+						if (columna%2!=0)
 						{
-							Huecos.Add(new Square(i, j, PiezasNegras[contadorPN], Colors.SandyBrown, false));
+							Huecos.Add(new Square(fila, columna, "shadynone", "shadynone"));
+						}
+						else
+						{
+							Huecos.Add(new Square(fila, columna, "lightynone", "lightynone"));
+						}
+					}
+					else if (fila>4)
+					{
+						if ((fila%2==0 && columna%2==0) || (fila%2!=0 && columna%2!=0))
+						{
+							Huecos.Add(new Square(fila, columna, PiezasNegras[contadorPN], "lightynone"));
 							contadorPN++;
 						}
 						else
 						{
-
-							Huecos.Add(new Square(i, j, null, Colors.SaddleBrown, false));
+							Huecos.Add(new Square(fila, columna, "shadynone", "shadynone"));
 						}
 					}
-					else if (i == 5)
-					{
-						if ((i%2!=0 && j%2!=0) || (i%2==0 && j%2==0))
-						{
-							Huecos.Add(new Square(i, j, PiezasNegras[contadorPN], Colors.SandyBrown, true));
-							contadorPN++;
-						}
-						else
-						{
-
-							Huecos.Add(new Square(i, j, null, Colors.SaddleBrown, false));
-						}
-
-					}
-
-
-
 				}
-
 			}
 		}
+
+		//void SetUpPiezas()
+		//{//Conteo de piezas
+		//	var contadorPB = 0;
+		//	var contadorPN = 0;
+		//	Huecos = new List<Square>();
+		//	for (int fila = 0; fila <FILAS; fila++)
+		//	{
+		//		for (int j = 0; j < COLUMNAS; j++)
+		//		{
+
+		//			//Si la pieza está en una de las dos primeras lineas no podrá mopverse, ya que tiene una pieza propia delante
+		//			if (fila < 2)
+		//			{
+
+		//				if ((fila%2!=0 && j%2!=0) || (fila%2==0 && j%2==0))
+		//				{
+
+		//					Huecos.Add(new Square(fila, j, PiezasBlancas[contadorPB], Colors.SandyBrown));
+		//					contadorPB++;
+		//				}
+		//				else
+		//				{
+
+		//					Huecos.Add(new Square(fila, j, "", Colors.SaddleBrown));
+		//				}
+
+
+		//				//En la tercera linea las piezas no tendrán ninguna delante por lo que podrán moverse
+		//			}
+		//			else if (fila == 2)
+		//			{
+		//				if ((fila%2!=0 && j%2!=0) || (fila%2==0 && j%2==0))
+		//				{
+
+		//					Huecos.Add(new Square(fila, j, PiezasBlancas[contadorPB], Colors.SandyBrown));
+		//					contadorPB++;
+		//				}
+		//				else
+		//				{
+
+		//					Huecos.Add(new Square(fila, j, "", Colors.SaddleBrown));
+		//				}
+
+		//			}
+		//			else if (fila == 3 && j%2 ==0)
+		//			{
+		//				Huecos.Add(new Square(fila, j, "", Colors.SaddleBrown));
+		//			}
+		//			else if (fila == 3 && j%2 !=0)
+		//			{
+		//				Huecos.Add(new Square(fila, j, "none", Colors.SandyBrown));
+		//			}	
+		//			else if (fila == 4 && j%2 !=0)
+		//			{
+		//				Huecos.Add(new Square(fila, j, "", Colors.SaddleBrown));
+		//			}
+		//			else if (fila == 4 && j%2 ==0)
+		//			{
+		//				Huecos.Add(new Square(fila, j, "none", Colors.SandyBrown));
+		//			}
+
+		//			//Igual que el anterior pero al contrario, ya que es para el jugador de arriba
+		//			else if (fila > 5 && fila < 8)
+		//			{
+		//				if ((fila%2!=0 && j%2!=0) || (fila%2==0 && j%2==0))
+		//				{
+		//					Huecos.Add(new Square(fila, j, PiezasNegras[contadorPN], Colors.SandyBrown));
+		//					contadorPN++;
+		//				}
+		//				else
+		//				{
+
+		//					Huecos.Add(new Square(fila, j, "", Colors.SaddleBrown));
+		//				}
+		//			}
+		//			else if (fila == 5)
+		//			{
+		//				if ((fila%2!=0 && j%2!=0) || (fila%2==0 && j%2==0))
+		//				{
+		//					Huecos.Add(new Square(fila, j, PiezasNegras[contadorPN], Colors.SandyBrown));
+		//					contadorPN++;
+		//				}
+		//				else
+		//				{
+
+		//					Huecos.Add(new Square(fila, j, "", Colors.SaddleBrown));
+		//				}
+
+		//			}
+
+
+
+		//		}
+
+		//	}
+		//}
 
 
 

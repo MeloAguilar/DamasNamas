@@ -44,9 +44,9 @@
         </Frame>
 
 
-       
-        
-            <CollectionView 
+
+
+        <CollectionView 
             VerticalOptions="Center"
             HorizontalOptions="Center"
             ItemsSource="{Binding HuecosTablero}"  
@@ -54,31 +54,35 @@
             SelectionMode="Single"
             HeightRequest="{OnPlatform Android=410, WinUI=350}"
             WidthRequest="{OnPlatform Android=385, WinUI=300}">
-                <CollectionView.ItemsLayout>
-                    <GridItemsLayout Orientation="Vertical" Span="8"/>
-                </CollectionView.ItemsLayout>
-                <CollectionView.ItemTemplate>
+            <CollectionView.ItemsLayout>
+                <GridItemsLayout Orientation="Vertical" Span="8" />
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
 
-                    <DataTemplate>
-                        <VerticalStackLayout
+                <DataTemplate>
+                    <AbsoluteLayout
                             VerticalOptions="Center"
                             HeightRequest="{OnPlatform Android=50, WinUI=40}"
                             WidthRequest="{OnPlatform Android=50, WinUI=40}"
-                            Background="{Binding ColorFondo}">
+                            >
 
-                            <Image 
-                                Margin="15"
+                        <Image 
+                                WidthRequest="{OnPlatform Android=50, WinUI=40}"
+                                HeightRequest="{OnPlatform Android=50,WinUI=40}"
+                                Source="{Binding ColorFondo}"/>
+                        <Image 
+                            AbsoluteLayout.LayoutBounds="{OnPlatform Android='20,15,11,20'}"
                                 WidthRequest="{OnPlatform Android=20, WinUI=20}"
                                 HeightRequest="{OnPlatform Android=20,WinUI=20}"
-                                Source="{Binding Pieza.ImageSrc}"/>
+                                Source="{Binding Pieza}"/>
 
-                        </VerticalStackLayout>
+                    </AbsoluteLayout>
 
 
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-            <Frame
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        <Frame
             CornerRadius="20"
             Margin="5,5,5,5"
            >

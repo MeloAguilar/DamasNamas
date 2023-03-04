@@ -13,58 +13,84 @@ namespace DamasNamas.Models
 		int posY;
 
 
-		bool esPosibleMover;
+		bool esReina;
+
+		ColorPieza tipoPieza;
 
 		
-		Color color;
+		String color;
 
-		private clsPieza pieza;
+		private String pieza;
 
-		public clsPieza Pieza
+
+
+		public bool EsReina { get { return esReina; } set { esReina = value; OnPropertyChanged(nameof(EsReina)); } }
+
+
+
+
+		public String Pieza
 		{
 			get { return pieza; }
 			set { 
+				if(value == "piezablanca")
+				{
+					TipoPieza = ColorPieza.Blanca;
+				}
+				else if(value == "piezanegra")
+				{
+					TipoPieza = ColorPieza.Negra;
+				}
+				else
+				{
+					TipoPieza = ColorPieza.None;
+				}
 				pieza = value;
 				OnPropertyChanged("Pieza");
 			}
 		}
 
 
-
-		public Color ColorFondo { get { return color; } set { color= value; OnPropertyChanged(nameof(ColorFondo)); } }
-
-		public int PosX { get; set; }
-		public int PosY { get; set; }
-		public bool EsPosibleMover { get => esPosibleMover; 
-			set 
-			{ 
-				esPosibleMover = value; 
-				OnPropertyChanged("Pieza"); 
-			} 
+		public ColorPieza TipoPieza
+		{
+			get
+			{
+				return tipoPieza;
+			}
+			set
+			{
+				tipoPieza = value;
+				OnPropertyChanged(nameof(TipoPieza));
+			}
 		}
 
 
+		public String ColorFondo { get { return color; } set { color= value; OnPropertyChanged(nameof(ColorFondo)); } }
+
+		public int PosX { get; set; }
+		public int PosY { get; set; }
+	
+
 
 		//Constructor para insertar directamente una pieza.
-		public Square(int posX, int posY, clsPieza _pieza, Color color, bool esposible)
+		public Square(int posX, int posY, String _pieza, String color)
 		{
 
 			PosX=posX;
 			PosY=posY;
 			Pieza = _pieza;
 			ColorFondo= color;
-			EsPosibleMover = esposible;
+			esReina = false;
 
 		}
 
 
 		//Constructor para insertar un square sin pieza.
-		public Square(int posX, int posY, Color color)
+		public Square(int posX, int posY, String color)
 		{
 			PosX=posX;
 			PosY=posY;
-			Pieza = null;
-			EsPosibleMover=false;
+			Pieza = "";
 			ColorFondo= color;
 		}
 
@@ -74,10 +100,22 @@ namespace DamasNamas.Models
 			PosX=_square.PosX;
 			PosY=_square.PosY;
 			Pieza = _square.Pieza;
-			EsPosibleMover=_square.EsPosibleMover;
 			ColorFondo= _square.ColorFondo;
 		}
 		
 
+	}
+
+
+	enum ColorPieza
+	{
+		None,
+		Blanca,
+		Negra
+	}
+	public enum Tipo
+	{
+		Normal,
+		Reina
 	}
 }

@@ -50,11 +50,14 @@
 
 	<ItemGroup>
 	  <None Remove="Resources\Images\key.png" />
+	  <None Remove="Resources\Images\lightynone.png" />
 	  <None Remove="Resources\Images\piezablanca.png" />
 	  <None Remove="Resources\Images\piezanegra.png" />
 	  <None Remove="Resources\Images\principal.png" />
 	  <None Remove="Resources\Images\reinablanca.png" />
 	  <None Remove="Resources\Images\reinanegra.png" />
+	  <None Remove="Resources\Images\selected.png" />
+	  <None Remove="Resources\Images\shadynone.png" />
 	  <None Remove="Resources\Images\usuario.png" />
 	</ItemGroup>
 
