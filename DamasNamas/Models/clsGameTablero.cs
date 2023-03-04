@@ -14,9 +14,9 @@ namespace DamasNamas.Models
 
 		List<Square> huecos;
 
-		String[] piezasBlancas;
+		int piezasBlancas;
 
-		String[] piezasNegras;
+		int piezasNegras;
 
 		long tiempo;
 
@@ -25,16 +25,19 @@ namespace DamasNamas.Models
 			get => huecos;
 			set => huecos = value;
 		}
-		public String[] PiezasBlancas
+
+		public int PiezasBlancas
 		{
 			get => piezasBlancas;
-			set => piezasBlancas = value;
+			set { piezasBlancas = value; OnPropertyChanged(nameof(PiezasBlancas)); }
+
 		}
 
-		public String[] PiezasNegras
+		public int PiezasNegras
 		{
 			get => piezasNegras;
-			set => piezasNegras = value;
+			set { piezasNegras = value; OnPropertyChanged(nameof(PiezasNegras)); }
+			
 		}
 
 		public long Tiempo { get { return tiempo; } set { tiempo = value; } }
@@ -42,7 +45,8 @@ namespace DamasNamas.Models
 		public clsGameTablero()
 		{
 			//Rellena los arrays de piezas
-			CreatePiezas();
+			PiezasNegras=12;
+			PiezasBlancas=12;
 			Tiempo = 0;
 			//Rellena el tablero
 			SetUpPiezas();
@@ -50,16 +54,6 @@ namespace DamasNamas.Models
 
 
 
-		private void CreatePiezas()
-		{
-			PiezasBlancas = new String[12];
-			PiezasNegras = new String[12];
-			for (int i = 0; i < 12; i++)
-			{
-				PiezasBlancas[i] = "piezablanca";
-				PiezasNegras[i] = "piezanegra";
-			}
-		}
 
 
 
@@ -78,7 +72,7 @@ namespace DamasNamas.Models
 					{
 						if ((fila%2==0 && columna%2==0) || (fila%2!=0 && columna%2!=0))
 						{
-							Huecos.Add(new Square(fila, columna, PiezasBlancas[contadorPB], "lightynone"));
+							Huecos.Add(new Square(fila, columna, "piezablanca", "lightynone"));
 							contadorPB++;
 						}
 						else
@@ -114,7 +108,7 @@ namespace DamasNamas.Models
 					{
 						if ((fila%2==0 && columna%2==0) || (fila%2!=0 && columna%2!=0))
 						{
-							Huecos.Add(new Square(fila, columna, PiezasNegras[contadorPN], "lightynone"));
+							Huecos.Add(new Square(fila, columna, "piezanegra", "lightynone"));
 							contadorPN++;
 						}
 						else
@@ -126,106 +120,6 @@ namespace DamasNamas.Models
 			}
 		}
 
-		//void SetUpPiezas()
-		//{//Conteo de piezas
-		//	var contadorPB = 0;
-		//	var contadorPN = 0;
-		//	Huecos = new List<Square>();
-		//	for (int fila = 0; fila <FILAS; fila++)
-		//	{
-		//		for (int j = 0; j < COLUMNAS; j++)
-		//		{
-
-		//			//Si la pieza está en una de las dos primeras lineas no podrá mopverse, ya que tiene una pieza propia delante
-		//			if (fila < 2)
-		//			{
-
-		//				if ((fila%2!=0 && j%2!=0) || (fila%2==0 && j%2==0))
-		//				{
-
-		//					Huecos.Add(new Square(fila, j, PiezasBlancas[contadorPB], Colors.SandyBrown));
-		//					contadorPB++;
-		//				}
-		//				else
-		//				{
-
-		//					Huecos.Add(new Square(fila, j, "", Colors.SaddleBrown));
-		//				}
-
-
-		//				//En la tercera linea las piezas no tendrán ninguna delante por lo que podrán moverse
-		//			}
-		//			else if (fila == 2)
-		//			{
-		//				if ((fila%2!=0 && j%2!=0) || (fila%2==0 && j%2==0))
-		//				{
-
-		//					Huecos.Add(new Square(fila, j, PiezasBlancas[contadorPB], Colors.SandyBrown));
-		//					contadorPB++;
-		//				}
-		//				else
-		//				{
-
-		//					Huecos.Add(new Square(fila, j, "", Colors.SaddleBrown));
-		//				}
-
-		//			}
-		//			else if (fila == 3 && j%2 ==0)
-		//			{
-		//				Huecos.Add(new Square(fila, j, "", Colors.SaddleBrown));
-		//			}
-		//			else if (fila == 3 && j%2 !=0)
-		//			{
-		//				Huecos.Add(new Square(fila, j, "none", Colors.SandyBrown));
-		//			}	
-		//			else if (fila == 4 && j%2 !=0)
-		//			{
-		//				Huecos.Add(new Square(fila, j, "", Colors.SaddleBrown));
-		//			}
-		//			else if (fila == 4 && j%2 ==0)
-		//			{
-		//				Huecos.Add(new Square(fila, j, "none", Colors.SandyBrown));
-		//			}
-
-		//			//Igual que el anterior pero al contrario, ya que es para el jugador de arriba
-		//			else if (fila > 5 && fila < 8)
-		//			{
-		//				if ((fila%2!=0 && j%2!=0) || (fila%2==0 && j%2==0))
-		//				{
-		//					Huecos.Add(new Square(fila, j, PiezasNegras[contadorPN], Colors.SandyBrown));
-		//					contadorPN++;
-		//				}
-		//				else
-		//				{
-
-		//					Huecos.Add(new Square(fila, j, "", Colors.SaddleBrown));
-		//				}
-		//			}
-		//			else if (fila == 5)
-		//			{
-		//				if ((fila%2!=0 && j%2!=0) || (fila%2==0 && j%2==0))
-		//				{
-		//					Huecos.Add(new Square(fila, j, PiezasNegras[contadorPN], Colors.SandyBrown));
-		//					contadorPN++;
-		//				}
-		//				else
-		//				{
-
-		//					Huecos.Add(new Square(fila, j, "", Colors.SaddleBrown));
-		//				}
-
-		//			}
-
-
-
-		//		}
-
-		//	}
-		//}
-
-
-
-
-
+		
 	}
 }

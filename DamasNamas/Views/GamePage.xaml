@@ -35,7 +35,7 @@
                 <Label
                 FontSize="25"
                 FontFamily="Bold"
-                Text="12"
+                Text="{Binding Tablero.PiezasBlancas}"
                 VerticalOptions="Center"
                 HorizontalOptions="End"/>
 
@@ -47,11 +47,13 @@
 
 
         <CollectionView 
+            x:Name="tablero"
+            SelectionMode="Single"
             VerticalOptions="Center"
             HorizontalOptions="Center"
-            ItemsSource="{Binding HuecosTablero}"  
+            ItemsSource="{Binding HuecosTablero}"
+            SelectionChangedCommand="{Binding }"
             SelectedItem="{Binding HuecoSeleccinado}"
-            SelectionMode="Single"
             HeightRequest="{OnPlatform Android=410, WinUI=350}"
             WidthRequest="{OnPlatform Android=385, WinUI=300}">
             <CollectionView.ItemsLayout>
@@ -98,7 +100,7 @@
                 <Label
                 FontSize="25"
                 FontFamily="Bold"
-                Text="12"
+                Text="{Binding Tablero.PiezasNegras}"
                 VerticalOptions="Center"
                 HorizontalOptions="End"/>
             </HorizontalStackLayout>
