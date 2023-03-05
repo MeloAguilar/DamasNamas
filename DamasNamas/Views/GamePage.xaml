@@ -74,8 +74,8 @@
                                 Source="{Binding ColorFondo}"/>
                         <Image 
                             AbsoluteLayout.LayoutBounds="{OnPlatform Android='20,15,11,20'}"
-                                WidthRequest="{OnPlatform Android=20, WinUI=20}"
-                                HeightRequest="{OnPlatform Android=20,WinUI=20}"
+                                WidthRequest="{OnPlatform Android=35, WinUI=20}"
+                                HeightRequest="{OnPlatform Android=40,WinUI=20}"
                                 Source="{Binding Pieza}"/>
 
                     </AbsoluteLayout>
