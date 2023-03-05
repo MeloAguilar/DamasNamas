@@ -49,6 +49,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Remove="Resources\Images\fondomadera.jpg" />
 	  <None Remove="Resources\Images\key.png" />
 	  <None Remove="Resources\Images\lightynone.png" />
 	  <None Remove="Resources\Images\piezablanca.png" />

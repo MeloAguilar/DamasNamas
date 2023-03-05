@@ -3,31 +3,41 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="DamasNamas.Views.GamePage"
               xmlns:vm="clr-namespace:DamasNamas.ViewModels"
-             Title="GamePage">
+             Title="GamePage"
+             BackgroundImageSource="fondomadera.jpg">
     <ContentPage.BindingContext>
         <vm:GameVM/>
     </ContentPage.BindingContext>
     <VerticalStackLayout
         Spacing="{OnPlatform Android=10}">
-
+        <Frame
+            Margin="0,0,05,0"
+            Padding="0,0,0,10"
+            CornerRadius="60"
+            WidthRequest="100"
+            HeightRequest="100">
         <Label 
             Margin="{OnPlatform Android='0,10,0,0'}"
                 FontSize="30"
                 FontFamily="Bold"
-                Text="{Binding Reloj}"
+                Text="{Binding RelojMostrado}"
                 VerticalOptions="Center"
                 HorizontalOptions="Center"/>
+        </Frame>
         <Frame
             Margin="5,10,5,5"
-            CornerRadius="20">
+            CornerRadius="20"
+            BackgroundColor="{Binding ColorTurnoArriba}">
             <HorizontalStackLayout
                         Spacing="250">
 
 
                 <Label
+                  BindingContext="{Binding JugadorArriba}"
                 FontSize="25"
                 FontFamily="Bold"
-                Text="Pepe"
+                Text="{Binding nombre}"
+                    
                 VerticalOptions="Center"
                 HorizontalOptions="Start"/>
 
@@ -45,14 +55,14 @@
 
 
 
-
+        <Frame
+            >
         <CollectionView 
             x:Name="tablero"
             SelectionMode="Single"
             VerticalOptions="Center"
             HorizontalOptions="Center"
             ItemsSource="{Binding HuecosTablero}"
-            SelectionChangedCommand="{Binding }"
             SelectedItem="{Binding HuecoSeleccinado}"
             HeightRequest="{OnPlatform Android=410, WinUI=350}"
             WidthRequest="{OnPlatform Android=385, WinUI=300}">
@@ -84,16 +94,19 @@
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
+        </Frame>
         <Frame
             CornerRadius="20"
             Margin="5,5,5,5"
+            BackgroundColor="{Binding ColorTurnoAbajo}"
            >
             <HorizontalStackLayout
                 Spacing="250">
                 <Label
+                    BindingContext="{Binding JugadorAbajo}"
                 FontSize="25"
                 FontFamily="Bold"
-                Text="Juan"
+                Text="{Binding nombre}"
                 VerticalOptions="Center"
                 HorizontalOptions="Start"/>
 

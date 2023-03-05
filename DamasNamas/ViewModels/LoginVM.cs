@@ -21,6 +21,8 @@ namespace DamasNamas.ViewModels
 		[NotifyPropertyChangedFor(nameof(ComandoSignup))]
 		String password;
 
+		clsJugador Jugador;
+
 		private DelegateCommand _comandoLogin;
 		private DelegateCommand _comandoSignup;
 
@@ -89,9 +91,8 @@ namespace DamasNamas.ViewModels
 
 		private async void GoTo()
 		{
-			clsJugador player = new(Username, Password);
 			var dict = new Dictionary<string, object>();
-			dict.Add("jugador", player);
+			dict.Add("JugadorQueMando", Jugador);
 			await Shell.Current.GoToAsync("///Main", true, dict);
 		}
 
@@ -154,11 +155,13 @@ namespace DamasNamas.ViewModels
 
 			ObservableCollection<clsJugador> jugadores = await clsListadoJugadoresBL.getJugadoresBL();
 
-			for (int i = 0; i < jugadores.Count; i++)
+			for (int i = 0; i < jugadores.Count && !logeadoConExito; i++)
 			{
 				if (jugadores[i].nombre.ToUpper().Equals(Username.ToUpper()) && jugadores[i].password.Equals(Password))
 				{
+					Jugador = jugadores[i];
 					logeadoConExito = true;
+					
 				}
 			}
 
@@ -190,10 +193,10 @@ namespace DamasNamas.ViewModels
 				clsGestionJugadoresBL.insertarJugadorBL(jugadorRegistrado);
 
 				var dict = new Dictionary<string, object>();
-				dict.Add("jugador", jugadorRegistrado);
+				dict.Add("JugadorQueMando", jugadorRegistrado);
 
 
-				await Shell.Current.GoToAsync("Main", true, dict);
+				await Shell.Current.GoToAsync("///Main", true, dict);
 			}
 
 

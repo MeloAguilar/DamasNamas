@@ -24,7 +24,17 @@ namespace DamasNamas.Models
 
 
 
-		public bool EsReina { get { return esReina; } set { esReina = value; OnPropertyChanged(nameof(EsReina)); } }
+		public bool EsReina 
+		{ 
+			get 
+			{ 
+				return esReina; 
+			} 
+			set 
+			{ 
+				esReina = value; OnPropertyChanged(nameof(EsReina)); 
+			} 
+		}
 
 
 

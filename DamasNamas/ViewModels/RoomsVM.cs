@@ -137,6 +137,7 @@ namespace DamasNamas.ViewModels
 		/// </summary>
 		private async void ComandoBotonCrearSala_Executed()
 		{
+			
 			//Cuando el usuario pulsa el boton crear sala, se mostrará un DisplayActionSheet para que el usuario introduzca el nombre de la sala
 			//y se creará la sala en la base de datos
 			var nombre = await Shell.Current.DisplayPromptAsync("Crear Sala", "Escribe el nombre de la sala a crear");
@@ -153,15 +154,20 @@ namespace DamasNamas.ViewModels
 				}
 				if (!registrado)
 				{
-
+					
 					clsSala sala = new clsSala(nombre, JugadorQueLlega.idJugador);
+
+					clsGestionSalasBL.insertarSalaBL(sala);
 					var dic = new Dictionary<string, object>
 					{
 						{ "SalaEnviada", sala }
 					};
 
+					
 
 					await Shell.Current.GoToAsync("///Game", dic);
+
+					
 				}
 				else
 				{

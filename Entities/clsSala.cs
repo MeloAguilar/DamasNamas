@@ -96,7 +96,7 @@ namespace Entities
 		{
 			nombreSala=_nombreSala;
 			jugadorArriba=_jugadorArriba;
-			jugadorAbajo=0;
+			jugadorAbajo=1;
 			tiempo=0;
 			cantidadFichasArriba=12;
 			cantidadFichasAbajo=12;

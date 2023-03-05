@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="DamasNamas.Views.LoginPage"
              xmlns:vm="clr-namespace:DamasNamas.ViewModels"
-             Title="LoginPage">
+             Title="LoginPage"
+             BackgroundImageSource="fondomadera.jpg">
     <ContentPage.BindingContext>
         <vm:LoginVM/>
     </ContentPage.BindingContext>
@@ -11,10 +12,13 @@
 
     <VerticalStackLayout
         VerticalOptions="Center">
-
+        <Label
+            Text="DAMas"
+            
+            VerticalOptions="Center"
+            HorizontalOptions="Center"/>
         <Frame
-                 HeightRequest="{OnPlatform Android=550}"
-                
+                 HeightRequest="{OnPlatform Android=500}"
                  WidthRequest="{OnPlatform Android=350}">
             <Grid
                     ColumnDefinitions="*,*"

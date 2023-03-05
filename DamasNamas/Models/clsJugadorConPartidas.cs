@@ -11,8 +11,11 @@ namespace DamasNamas.Models
 	{
 		public List<clsSala> partidas { get; set; }
 
+
+
 		public clsJugadorConPartidas(String nombre, String password, List<clsSala> partidasJugadas)
 		{
+			base.idJugador = idJugador;
 			base.nombre=nombre;
 			base.password=password;
 			partidas=partidasJugadas;

@@ -26,11 +26,55 @@ namespace DamasNamas.ViewModels
 
 		EstadosJuego estado;
 
+		String relojMostrado;
+
 		TimeSpan reloj;
 
 		#region Properties
 
+		public Color ColorTurnoArriba
+		{
+			get
+			{
+				return colorTurnoArriba;
+			}
+			set
+			{
+				colorTurnoArriba = value;
+				OnPropertyChanged(nameof(ColorTurnoArriba));
+			}
+		}
 
+		public String RelojMostrado
+		{
+			get
+			{
+				return relojMostrado;
+			}
+			set
+			{
+				relojMostrado = value;
+				OnPropertyChanged(nameof(RelojMostrado));
+			}
+		}
+
+
+
+		public Color ColorTurnoAbajo
+		{
+			get
+			{
+				return colorTurnoAbajo;
+			}
+			set
+			{
+				colorTurnoAbajo = value;
+				OnPropertyChanged(nameof(ColorTurnoAbajo));
+			}
+		}
+		Color colorTurnoArriba;
+
+		Color colorTurnoAbajo;
 		public clsGameTablero Tablero
 		{
 			get
@@ -101,6 +145,8 @@ namespace DamasNamas.ViewModels
 
 		public GameVM()
 		{
+			ColorTurnoArriba = Colors.LightGreen;
+			ColorTurnoAbajo = Colors.LightGray;
 			PosiblesComidas = new List<Square>();
 			tablero = new clsGameTablero();
 			HuecosTablero = new ObservableCollection<Square>(Tablero.Huecos);
@@ -124,6 +170,7 @@ namespace DamasNamas.ViewModels
 
 		public async void BeginMatch()
 		{
+
 			Tablero.Tiempo = 0;
 			Estado = EstadosJuego.TurnoBlancas;
 			await Shell.Current.DisplayAlert("", "Blancas empiezan", "Ok");
@@ -173,6 +220,7 @@ namespace DamasNamas.ViewModels
 					{
 						Reloj = TimeSpan.FromMilliseconds(Tablero.Tiempo);
 						Tablero.Tiempo+=1000;
+						actualizarRelojMostrado();
 					};
 					timer.Start();
 				}
@@ -184,6 +232,27 @@ namespace DamasNamas.ViewModels
 
 		}
 
+		/// <summary>
+		/// Método que se encarga de quitar la hora al timespan convirtiendolo en un string que solo contiene la 
+		/// informacion visual de este
+		/// <pre>nada</pre>
+		/// <post>nada</post>
+		/// </summary>
+		void actualizarRelojMostrado()
+		{
+
+			var mins = Reloj.Minutes.ToString();
+			var secs = Reloj.Seconds.ToString();
+			if (Reloj.Minutes< 10)
+			{
+				mins= $"0{mins}";
+			}
+			if (Reloj.Seconds < 10)
+			{
+				secs = $"0{secs}";
+			}
+			RelojMostrado =  $"{mins} : {secs}";
+		}
 		/// <summary>
 		/// Método que se encarga de inicializar el temporizador en el hilo principal
 		/// </summary>
@@ -540,14 +609,19 @@ namespace DamasNamas.ViewModels
 			else if (Tablero.PiezasNegras == 0)
 			{
 				Estado = EstadosJuego.BlancoGana;
+
 			}
 			else if (Estado.Equals(EstadosJuego.TurnoBlancas))
 			{
 				Estado = EstadosJuego.TurnoNegras;
+				ColorTurnoAbajo = Colors.LightGreen;
+				ColorTurnoArriba = Colors.LightGray;
 			}
 			else if (Estado.Equals(EstadosJuego.TurnoNegras))
 			{
 				Estado = EstadosJuego.TurnoBlancas;
+				ColorTurnoArriba = Colors.LightGreen;
+				ColorTurnoAbajo = Colors.LightGray;
 			}
 		}
 
@@ -673,15 +747,15 @@ namespace DamasNamas.ViewModels
 
 			}else if (difY > 0 && difX < 0)
 			{
-				huecoAComer = HuecosTablero.Where(x => x.PosX == (HuecoSeleccinado.PosX + 1) && x.PosY == (HuecoSeleccinado.PosY-1)).First();
+				huecoAComer = HuecosTablero.Where(x => x.PosX == (HuecoSeleccinado.PosX - 1) && x.PosY == (HuecoSeleccinado.PosY + 1)).First();
 			}
 			else if(difY < 0 && difX > 0)
 			{
-				huecoAComer=HuecosTablero.Where(x => x.PosX == (HuecoSeleccinado.PosX-1) && x.PosY == (HuecoSeleccinado.PosY+1)).First();
+				huecoAComer=HuecosTablero.Where(x => x.PosX == (HuecoSeleccinado.PosX + 1) && x.PosY == (HuecoSeleccinado.PosY - 1)).First();
 			}
 			else if(difY < 0 && difX < 0) 
 			{
-				huecoAComer = HuecosTablero.Where(x => x.PosX == (HuecoSeleccinado.PosX - 1) &&x.PosY == (HuecoSeleccinado.PosY - 1)).First();
+				huecoAComer = HuecosTablero.Where(x => x.PosX == (HuecoSeleccinado.PosX + 1) &&x.PosY == (HuecoSeleccinado.PosY + 1)).First();
 			}
 			return huecoAComer;
 		}

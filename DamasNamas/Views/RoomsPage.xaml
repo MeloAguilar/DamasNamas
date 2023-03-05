@@ -3,14 +3,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="DamasNamas.Views.RoomsPage"
              xmlns:vm="clr-namespace:DamasNamas.ViewModels"
-             Title="RoomsPage">
+             Title="RoomsPage"
+             BackgroundImageSource="fondomadera.jpg">
     <ContentPage.BindingContext>
         <vm:RoomsVM/>
     </ContentPage.BindingContext>
     <VerticalStackLayout
         Spacing="{OnPlatform Android=15}">
         <Frame
-            Margin="{OnPlatform Android=3}"
+            Margin="{OnPlatform Android=20}"
             CornerRadius="60"
             Padding="0,7,9,7"
             HeightRequest="{OnPlatform Android=55}">
@@ -23,7 +24,9 @@
 
 
             <Frame
-           HeightRequest="{OnPlatform Android=400}">
+                HeightRequest="{OnPlatform Android=400}"
+                WidthRequest="{OnPlatform Android=350}"
+                >
 
                 <ListView ItemsSource="{Binding ListadoSalas}" SelectedItem="{Binding SalaSeleccionada}">
 
@@ -35,8 +38,9 @@
 
                                 <HorizontalStackLayout>
 
-                                    <Label Text="{Binding nombreSala}"
-                                   FontSize="{OnPlatform Android=16}"/>
+                                    <Label 
+                                        Text="{Binding nombreSala}"
+                                        FontSize="{OnPlatform Android=16}"/>
 
                                 </HorizontalStackLayout>
 
@@ -49,15 +53,20 @@
                 </ListView>
             </Frame>
 
-            <HorizontalStackLayout Spacing="{OnPlatform Android=100}"
-                               Margin="{OnPlatform Android=10}"
-                               VerticalOptions="End"
-                               >
+            <HorizontalStackLayout 
+                Spacing="{OnPlatform Android=100}"
+                Margin="{OnPlatform Android=45}"
+                VerticalOptions="End"
+                >
 
-                <Button Text="Entrar a sala" Command="{Binding ComandoEntrarSala}"
+                <Button
+                    Text="Entrar a sala" 
+                    Command="{Binding ComandoEntrarSala}"
                     VerticalOptions="End"/>
 
-                <Button Text="Crear sala" Command="{Binding ComandoCrearSala}"/>
+                <Button 
+                    Text="Crear sala" 
+                    Command="{Binding ComandoCrearSala}"/>
 
             </HorizontalStackLayout>
 
