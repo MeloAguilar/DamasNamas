@@ -152,7 +152,7 @@ namespace DamasNamas.ViewModels
 		{
 
 			bool logeadoConExito = false;
-
+			try{
 			ObservableCollection<clsJugador> jugadores = await clsListadoJugadoresBL.getJugadoresBL();
 
 			for (int i = 0; i < jugadores.Count && !logeadoConExito; i++)
@@ -163,6 +163,11 @@ namespace DamasNamas.ViewModels
 					logeadoConExito = true;
 					
 				}
+			}
+			}
+			catch (Exception e)
+			{
+				await Shell.Current.DisplayAlert("Ha petao", "Yo no se porqué, busca porahi", "po vale");
 			}
 
 			return logeadoConExito;

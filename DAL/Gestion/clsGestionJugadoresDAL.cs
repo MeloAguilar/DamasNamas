@@ -114,7 +114,7 @@ namespace DAL.Gestion
 			string data;
 			HttpContent content;
 			string miUri = clsUriBase.getUriBase();
-			Uri uri = new($"{miUri}/jugadores/{idJugador}");
+			Uri uri = new($"{miUri}jugadores/{idJugador}");
 
 			HttpResponseMessage miCodigoRespuesta;
 

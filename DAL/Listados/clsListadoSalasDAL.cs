@@ -25,7 +25,7 @@ namespace DAL.Listados
 			string data;
 			HttpContent content;
 			string urlString = clsUriBase.getUriBase();
-			Uri miUri = new($"{urlString}/salas");
+			Uri miUri = new($"{urlString}salas");
 			HttpResponseMessage miCodigoRespuesta;
 			try
 			{
@@ -37,7 +37,8 @@ namespace DAL.Listados
 
 					client.Dispose();
 
-					salas = JsonConvert.DeserializeObject<List<clsSala>>(data);
+					if(data != null) 
+						salas = JsonConvert.DeserializeObject<List<clsSala>>(data);
 
 
 				}

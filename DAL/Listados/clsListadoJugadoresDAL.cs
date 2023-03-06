@@ -19,7 +19,7 @@ namespace DAL.Listados
 			string data;
 			HttpContent content;
 			string urlString = clsUriBase.getUriBase();
-			Uri miUri = new($"{urlString}/jugadores");
+			Uri miUri = new($"{urlString}jugadores");
 			HttpResponseMessage miCodigoRespuesta;
 
 			try

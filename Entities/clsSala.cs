@@ -15,7 +15,7 @@ namespace Entities
 
 		private int _jugadorAbajo;
 
-		private long _tiempo;
+		private String _tiempo;
 
 		private int _cantidadFichasArriba;
 
@@ -34,7 +34,7 @@ namespace Entities
 
 		public int jugadorAbajo { get { return _jugadorAbajo; } set { _jugadorAbajo = value; } }
 
-		public long tiempo { get { return _tiempo; } set { _tiempo = value; } }
+		public String tiempo { get { return _tiempo; } set { _tiempo = value; } }
 
 		public int cantidadFichasArriba { get { return _cantidadFichasArriba; } set { _cantidadFichasArriba = value; } }
 
@@ -54,7 +54,7 @@ namespace Entities
 
 
 		//Constructor para la recogida de salas de la base de datos
-		public clsSala(int _codSala, string _nombreSala, int _jugadorArriba, int _jugadorAbajo, long _tiempo, int _cantidadFichasArriba, int _cantidadFichasAbajo)
+		public clsSala(int _codSala, string _nombreSala, int _jugadorArriba, int _jugadorAbajo, String _tiempo, int _cantidadFichasArriba, int _cantidadFichasAbajo)
 		{
 			codSala=_codSala;
 			nombreSala=_nombreSala;
@@ -67,7 +67,7 @@ namespace Entities
 		}
 
 		//Constructor para cuando se crea una sala por defecto
-		public clsSala(int _codSala, string _nombreSala, int _jugadorArriba, int _jugadorAbajo, long _tiempo)
+		public clsSala(int _codSala, string _nombreSala, int _jugadorArriba, int _jugadorAbajo, String _tiempo)
 		{
 			codSala=_codSala;
 			nombreSala=_nombreSala;
@@ -85,7 +85,7 @@ namespace Entities
 			nombreSala=_nombreSala;
 			jugadorArriba=0;
 			jugadorAbajo=0;
-			tiempo=0;
+			tiempo="0";
 			cantidadFichasArriba=12;
 			cantidadFichasAbajo=12;
 			espacio = 0;
@@ -96,8 +96,8 @@ namespace Entities
 		{
 			nombreSala=_nombreSala;
 			jugadorArriba=_jugadorArriba;
-			jugadorAbajo=1;
-			tiempo=0;
+			jugadorAbajo=0;
+			tiempo="0";
 			cantidadFichasArriba=12;
 			cantidadFichasAbajo=12;
 			espacio = 1;

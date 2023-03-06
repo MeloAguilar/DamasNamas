@@ -16,7 +16,6 @@ namespace Entities
 
 		private String _password;
 
-		//private List<clsSala> _partidasJugadas;// consulta con inner join ¿?
 
 		#endregion
 

@@ -1,4 +1,6 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using BL.Gestion;
+using BL.Listados;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DamasNamas.Models;
 using DamasNamas.ViewModels.Utilidades;
@@ -10,15 +12,43 @@ using System.Windows.Input;
 
 namespace DamasNamas.ViewModels
 {
-	[QueryProperty(nameof(JugadorAbajo), "JugadorQueMando")]
+	[QueryProperty(nameof(sala), "SalaEnviada")]
 	partial class GameVM : VMBase
 	{
 		clsGameTablero tablero;
+		clsSala _sala;
+		public clsSala sala 
+		{ 
+			get 
+			{ 
+				return _sala; 
+			} 
+			set 
+			{
+				_sala = value;
+				GestionUsuarios();
+				OnPropertyChanged(nameof(sala)); 
 
+			} 
+		}
+		async void GestionUsuarios()
+		{
+			var listaSalas = await clsListadoSalasBL.getSalasBL();
+			foreach (var salaProbar in listaSalas)
+			{
+				if (salaProbar.nombreSala.Equals(sala.nombreSala))
+				{
+					sala.codSala = salaProbar.codSala;
+					
+				}
+			}
+
+			jugadorAbajo = await clsGestionJugadoresBL.getJugadorBL(sala.jugadorAbajo);
+			jugadorArriba = await clsGestionJugadoresBL.getJugadorBL(sala.jugadorArriba);
+		}
 		clsJugador jugadorArriba;
 
 		clsJugador jugadorAbajo;
-
 		Square huecoSeleccionado;
 
 		[ObservableProperty]
@@ -123,7 +153,11 @@ namespace DamasNamas.ViewModels
 		public clsJugador JugadorAbajo
 		{
 			get { return jugadorAbajo; }
-			set { jugadorAbajo= value; OnPropertyChanged(nameof(JugadorAbajo)); }
+			set 
+			{ 
+				jugadorAbajo= value;
+				OnPropertyChanged(nameof(JugadorAbajo)); 
+			}
 		}
 
 		public EstadosJuego Estado
@@ -145,6 +179,8 @@ namespace DamasNamas.ViewModels
 
 		public GameVM()
 		{
+			
+	
 			ColorTurnoArriba = Colors.LightGreen;
 			ColorTurnoAbajo = Colors.LightGray;
 			PosiblesComidas = new List<Square>();
@@ -170,10 +206,8 @@ namespace DamasNamas.ViewModels
 
 		public async void BeginMatch()
 		{
-
 			Tablero.Tiempo = 0;
 			Estado = EstadosJuego.TurnoBlancas;
-			await Shell.Current.DisplayAlert("", "Blancas empiezan", "Ok");
 			await PutTiempo();
 		}
 
@@ -204,10 +238,11 @@ namespace DamasNamas.ViewModels
 		/// 
 		/// 
 		/// </summary>
-		private void PutTimer()
+		private async void PutTimer()
 		{
 			try
 			{
+
 				//Si el estado del juego sigue siendo BlancoMueve o NegroMueve, el Timer seguirá corriendo
 				if (!(Estado.Equals(EstadosJuego.BlancoGana) || Estado.Equals(EstadosJuego.NegroGana)))
 				{
@@ -251,7 +286,7 @@ namespace DamasNamas.ViewModels
 			{
 				secs = $"0{secs}";
 			}
-			RelojMostrado =  $"{mins} : {secs}";
+			RelojMostrado =  $"{mins}:{secs}";
 		}
 		/// <summary>
 		/// Método que se encarga de inicializar el temporizador en el hilo principal
@@ -341,10 +376,6 @@ namespace DamasNamas.ViewModels
 
 			int fila = HuecoSeleccinado.PosX;
 			int columna = HuecoSeleccinado.PosY;
-			//var posibleXmayor = fila+1;
-			//var posibleXmenor = fila-1;
-			//var posibleYmayor = columna+1;
-			//var posibleYmenor = columna-1;
 
 
 
@@ -747,7 +778,7 @@ namespace DamasNamas.ViewModels
 
 			}else if (difY > 0 && difX < 0)
 			{
-				huecoAComer = HuecosTablero.Where(x => x.PosX == (HuecoSeleccinado.PosX - 1) && x.PosY == (HuecoSeleccinado.PosY + 1)).First();
+				huecoAComer = HuecosTablero.Where(x => x.PosX == (HuecoSeleccinado.PosX + 1) && x.PosY == (HuecoSeleccinado.PosY - 1)).First();
 			}
 			else if(difY < 0 && difX > 0)
 			{
@@ -791,6 +822,7 @@ namespace DamasNamas.ViewModels
 						(x.PosY == HuecoAnterior.PosY+signoDifY))
 						.First();
 					huecomido.Pieza = "lightynone";
+					huecomido.EsReina = false;
 
 					Tablero.PiezasNegras--;
 					haComido = true;
@@ -807,7 +839,7 @@ namespace DamasNamas.ViewModels
 						(x.PosY == HuecoAnterior.PosY + signoDifY))
 						.First();
 					huecomido.Pieza = "lightynone";
-
+					huecomido.EsReina = false;
 					Tablero.PiezasBlancas--;
 					haComido = true;
 
@@ -890,6 +922,7 @@ namespace DamasNamas.ViewModels
 				}
 
 				huecomido.Pieza = "lightynone";
+				huecomido.EsReina = false;
 				if (Estado.Equals(EstadosJuego.TurnoBlancas))
 					Tablero.PiezasNegras--;
 				if (Estado.Equals(EstadosJuego.TurnoNegras))

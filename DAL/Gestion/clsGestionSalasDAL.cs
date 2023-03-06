@@ -11,14 +11,19 @@ using System.Threading.Tasks;
 namespace DAL.Gestion
 {
 	public class clsGestionSalasDAL
-	{        /// <summary>
-			 /// Descripcion: Metodo para insertar una sala en la BBDD mediante una llamada a la API.
-			 /// Precondiciones: Ninguna.
-			 /// Postcondiciones: Inserta la sala correctamente.
-			 /// 
-			 /// </summary>
-			 /// <param name="sala"></param>
-			 /// <returns></returns>
+	{
+		
+		
+		
+		
+		/// <summary>
+		/// Descripcion: Metodo para insertar una sala en la BBDD mediante una llamada a la API.
+		/// Precondiciones: Ninguna.
+		/// Postcondiciones: Inserta la sala correctamente.
+		/// 
+		/// </summary>
+		/// <param name="sala"></param>
+		/// <returns></returns>
 		public static async Task<HttpStatusCode> insertarSalaDAL(clsSala sala)
 		{
 			HttpClient mihttpClient = new HttpClient();

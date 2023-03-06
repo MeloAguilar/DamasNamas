@@ -28,7 +28,7 @@
                 WidthRequest="{OnPlatform Android=350}"
                 >
 
-                <ListView ItemsSource="{Binding ListadoSalas}" SelectedItem="{Binding SalaSeleccionada}">
+                <ListView ItemsSource="{Binding ListadoSalasMostrado}" SelectedItem="{Binding SalaSeleccionada}">
 
                     <ListView.ItemTemplate>
 
@@ -40,7 +40,8 @@
 
                                     <Label 
                                         Text="{Binding nombreSala}"
-                                        FontSize="{OnPlatform Android=16}"/>
+                                        FontSize="{OnPlatform Android=20}"
+                                        TextColor="Black"/>
 
                                 </HorizontalStackLayout>
 
@@ -54,8 +55,8 @@
             </Frame>
 
             <HorizontalStackLayout 
-                Spacing="{OnPlatform Android=100}"
-                Margin="{OnPlatform Android=45}"
+                Spacing="{OnPlatform Android=10}"
+                Margin="{OnPlatform Android=0}"
                 VerticalOptions="End"
                 >
 

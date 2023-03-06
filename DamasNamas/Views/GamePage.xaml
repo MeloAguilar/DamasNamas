@@ -1,4 +1,33 @@
 <?xml version="1.0" encoding="utf-8" ?>
+    
+<!--xmlns:alohakit="clr-namespace:AlohaKit.Animations;assembly=AlohaKit.Animations"
+             x:Class="_13_Resources2.MainPage">
+    <ContentPage.Resources>
+
+        <LinearGradientBrush x:Key="buttonBackground">
+            <GradientStop Offset="0" Color="Silver"/>
+            <GradientStop Offset="1" Color="Orange"/>
+        </LinearGradientBrush>
+       
+        <alohakit:StoryBoard
+            x:Key="StoryBoard"
+            Target="{x:Reference FadeBox}">
+            <alohakit:TranslateToAnimation
+            Duration="2000"
+             TranslateX="100"
+             TranslateY="100">
+            </alohakit:TranslateToAnimation>
+            <alohakit:ShakeAnimation />
+            
+            <alohakit:FadeToAnimation   
+            Duration="2000"
+             Opacity="0"/>
+           
+        </alohakit:StoryBoard>
+    </ContentPage.Resources>-->
+    
+    
+    
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="DamasNamas.Views.GamePage"
@@ -9,16 +38,15 @@
         <vm:GameVM/>
     </ContentPage.BindingContext>
     <VerticalStackLayout
-        Spacing="{OnPlatform Android=10}">
+        Spacing="{OnPlatform Android=5}">
         <Frame
-            Margin="0,0,05,0"
             Padding="0,0,0,10"
             CornerRadius="60"
-            WidthRequest="100"
-            HeightRequest="100">
+            WidthRequest="60"
+            HeightRequest="60">
         <Label 
             Margin="{OnPlatform Android='0,10,0,0'}"
-                FontSize="30"
+                FontSize="20"
                 FontFamily="Bold"
                 Text="{Binding RelojMostrado}"
                 VerticalOptions="Center"
@@ -28,16 +56,12 @@
             Margin="5,10,5,5"
             CornerRadius="20"
             BackgroundColor="{Binding ColorTurnoArriba}">
-            <HorizontalStackLayout
-                        Spacing="250">
-
+            <HorizontalStackLayout>
 
                 <Label
-                  BindingContext="{Binding JugadorArriba}"
                 FontSize="25"
                 FontFamily="Bold"
-                Text="{Binding nombre}"
-                    
+                Text="{Binding JugadorArriba.nombre}"
                 VerticalOptions="Center"
                 HorizontalOptions="Start"/>
 
@@ -103,10 +127,9 @@
             <HorizontalStackLayout
                 Spacing="250">
                 <Label
-                    BindingContext="{Binding JugadorAbajo}"
                 FontSize="25"
                 FontFamily="Bold"
-                Text="{Binding nombre}"
+                Text="{Binding JugadorAbajo.nombre}"
                 VerticalOptions="Center"
                 HorizontalOptions="Start"/>
 

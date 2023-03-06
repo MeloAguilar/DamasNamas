@@ -45,6 +45,8 @@ namespace DamasNamas.ViewModels
 			}
 			set
 			{
+				OnPropertyChanged(nameof(ComandoBuscarSala));
+				OnPropertyChanged(nameof(ComandoEntrarSala));
 				salaSeleccionada = value;
 				OnPropertyChanged("SalaSeleccionada");
 			}
@@ -73,7 +75,6 @@ namespace DamasNamas.ViewModels
 			set
 			{
 				jugadorQueLlega = value;
-				OnPropertyChanged(nameof(ComandoBuscarSala));
 				OnPropertyChanged("JugadorQueLlega");
 			}
 		}
@@ -154,18 +155,25 @@ namespace DamasNamas.ViewModels
 				}
 				if (!registrado)
 				{
-					
-					clsSala sala = new clsSala(nombre, JugadorQueLlega.idJugador);
-
-					clsGestionSalasBL.insertarSalaBL(sala);
-					var dic = new Dictionary<string, object>
+					try
 					{
-						{ "SalaEnviada", sala }
-					};
+						clsSala sala = new clsSala(nombre, JugadorQueLlega.idJugador);
 
+						clsGestionSalasBL.insertarSalaBL(sala);
+						var dic = new Dictionary<string, object>();
+						dic.Add("SalaEnviada", sala );
+				
+
+
+
+						await Shell.Current.GoToAsync("///Game", true,  dic);
+					}
+					catch (Exception e)
+					{
+						await Shell.Current.DisplayAlert("Los muertos de MAUI","*1000", "Ya ve rmano");
+					}
 					
-
-					await Shell.Current.GoToAsync("///Game", dic);
+		
 
 					
 				}
@@ -200,7 +208,7 @@ namespace DamasNamas.ViewModels
 					};
 
 
-				await Shell.Current.GoToAsync("///Game", dic);
+				await Shell.Current.GoToAsync("///Game",true, dic);
 
 			}
 			else
@@ -282,7 +290,7 @@ namespace DamasNamas.ViewModels
 		private async void rellenarSalasMostradas()
 		{
 			listadoSalasBackup = await clsListadoSalasBL.getSalasBL();
-			ListadoSalasMostrado = new ObservableCollection<clsSala>(listadoSalasBackup);
+			ListadoSalasMostrado = new ObservableCollection<clsSala>();
 
 			//TODO: Usar Metoido de la dal
 			//Recorremos la lista de salas
