@@ -55,9 +55,10 @@
             </Frame>
 
             <HorizontalStackLayout 
-                Spacing="{OnPlatform Android=10}"
-                Margin="{OnPlatform Android=0}"
+                Spacing="{OnPlatform Android=70}"
+                Margin="{OnPlatform Android='0,0,05,0'}"
                 VerticalOptions="End"
+                HorizontalOptions="Center"
                 >
 
                 <Button

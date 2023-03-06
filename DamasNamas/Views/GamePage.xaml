@@ -60,8 +60,10 @@
 
                 <Label
                 FontSize="25"
+                HeightRequest="30"
+                WidthRequest="300"
                 FontFamily="Bold"
-                Text="{Binding JugadorArriba.nombre, Mode=OneWay}"
+                Text="{Binding NombreJugadorArriba, Mode=OneWay}"
                 VerticalOptions="Center"
                 HorizontalOptions="Start"/>
 
@@ -125,11 +127,13 @@
             BackgroundColor="{Binding ColorTurnoAbajo}"
            >
             <HorizontalStackLayout
-                Spacing="250">
+                Spacing="0">
                 <Label
                 FontSize="25"
+                HeightRequest="30"
+                WidthRequest="300"
                 FontFamily="Bold"
-                Text="{Binding JugadorAbajo.nombre, Mode=OneWay}"
+                Text="{Binding NombreJugadorAbajo, Mode=OneWay}"
                 VerticalOptions="Center"
                 HorizontalOptions="Start"/>
 

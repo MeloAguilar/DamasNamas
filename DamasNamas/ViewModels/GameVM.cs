@@ -9,16 +9,61 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Windows.Input;
+using Microsoft.AspNetCore.SignalR.Client;
 
 namespace DamasNamas.ViewModels
 {
+	[QueryProperty(nameof(esOnline), "EsOnline")]
 	[QueryProperty(nameof(sala), "SalaEnviada")]
 	partial class GameVM : VMBase
 	{
+		#region Atributes
+
+		bool esOnline;
 		clsGameTablero tablero;
 		clsSala _sala;
 		String nombreJugadorArriba;
 		String nombreJugadorAbajo;
+		clsJugador jugadorArriba;
+		clsJugador jugadorAbajo;
+		Square huecoSeleccionado;
+		private ObservableCollection<Square> huecosTablero;
+
+		EstadosJuego estado;
+		String relojMostrado;
+		TimeSpan reloj;
+
+		HubConnection hubConnection;
+
+		#endregion
+
+		#region Properties
+
+		public bool EsOnline
+		{
+			get
+			{
+				return esOnline;
+			}
+			set
+			{
+				esOnline = value;
+				OnPropertyChanged(nameof(EsOnline));
+			}
+		}
+		public ObservableCollection<Square> HuecosTablero
+		{
+			get
+			{
+				return huecosTablero;
+			}
+			set
+			{
+				huecosTablero = value;
+				OnPropertyChanged(nameof(HuecosTablero));
+			}
+		}
+
 		public String NombreJugadorArriba
 		{
 			get
@@ -30,7 +75,7 @@ namespace DamasNamas.ViewModels
 				nombreJugadorArriba = value;
 				OnPropertyChanged(nameof(NombreJugadorArriba));
 			}
-		}	
+		}
 
 		public String NombreJugadorAbajo
 		{
@@ -43,22 +88,37 @@ namespace DamasNamas.ViewModels
 				nombreJugadorAbajo = value;
 				OnPropertyChanged(nameof(NombreJugadorAbajo));
 			}
-		}	
-		public clsSala sala 
-		{ 
-			get 
-			{ 
-				return _sala; 
-			} 
-			set 
+		}
+
+		public clsSala sala
+		{
+			get
+			{
+				return _sala;
+			}
+			set
 			{
 				_sala = value;
 				GestionUsuarios();
-				OnPropertyChanged(nameof(sala)); 
+				OnPropertyChanged(nameof(sala));
 
-			} 
+			}
 		}
-		async void GestionUsuarios()
+        public HubConnection HubConnection
+		{
+            get
+            {
+                return hubConnection;
+            }
+            set
+            {
+				hubConnection = value;
+            }
+        }
+        #endregion
+
+
+        async void GestionUsuarios()
 		{
 			var listaSalas = await clsListadoSalasBL.getSalasBL();
 			foreach (var salaProbar in listaSalas)
@@ -66,7 +126,7 @@ namespace DamasNamas.ViewModels
 				if (salaProbar.nombreSala.Equals(sala.nombreSala))
 				{
 					sala.codSala = salaProbar.codSala;
-					
+
 				}
 			}
 
@@ -75,20 +135,13 @@ namespace DamasNamas.ViewModels
 
 			NombreJugadorAbajo = jugadorAbajo.nombre;
 			NombreJugadorArriba = jugadorArriba.nombre;
+			if (NombreJugadorAbajo.Equals("Test"))
+			{
+				NombreJugadorAbajo = ("");
+			}
+
 		}
-		clsJugador jugadorArriba;
 
-		clsJugador jugadorAbajo;
-		Square huecoSeleccionado;
-
-		[ObservableProperty]
-		private ObservableCollection<Square> huecosTablero;
-
-		EstadosJuego estado;
-
-		String relojMostrado;
-
-		TimeSpan reloj;
 
 		#region Properties
 
@@ -183,10 +236,10 @@ namespace DamasNamas.ViewModels
 		public clsJugador JugadorAbajo
 		{
 			get { return jugadorAbajo; }
-			set 
-			{ 
-				jugadorAbajo= value;
-				OnPropertyChanged(nameof(JugadorAbajo)); 
+			set
+			{
+				jugadorAbajo = value;
+				OnPropertyChanged(nameof(JugadorAbajo));
 			}
 		}
 
@@ -209,8 +262,8 @@ namespace DamasNamas.ViewModels
 
 		public GameVM()
 		{
-			
-	
+
+
 			ColorTurnoArriba = Colors.LightGreen;
 			ColorTurnoAbajo = Colors.LightGray;
 			PosiblesComidas = new List<Square>();
@@ -236,9 +289,19 @@ namespace DamasNamas.ViewModels
 
 		public async void BeginMatch()
 		{
-			Tablero.Tiempo = 0;
-			Estado = EstadosJuego.TurnoBlancas;
-			await PutTiempo();
+			if(esOnline)
+			{
+				while (JugadorAbajo.idJugador == 0 && JugadorAbajo.nombre.Equals("Test"))
+				{
+					await Shell.Current.DisplayAlert("","Esperando al otro jugador", "ok");
+				}
+			}
+			else
+			{
+				Tablero.Tiempo = 0;
+				Estado = EstadosJuego.TurnoBlancas;
+				await PutTiempo();
+			}
 		}
 
 		//public void EndMatch()
@@ -284,7 +347,7 @@ namespace DamasNamas.ViewModels
 					timer.Tick += (s, e) =>
 					{
 						Reloj = TimeSpan.FromMilliseconds(Tablero.Tiempo);
-						Tablero.Tiempo+=1000;
+						Tablero.Tiempo += 1000;
 						actualizarRelojMostrado();
 					};
 					timer.Start();
@@ -308,15 +371,15 @@ namespace DamasNamas.ViewModels
 
 			var mins = Reloj.Minutes.ToString();
 			var secs = Reloj.Seconds.ToString();
-			if (Reloj.Minutes< 10)
+			if (Reloj.Minutes < 10)
 			{
-				mins= $"0{mins}";
+				mins = $"0{mins}";
 			}
 			if (Reloj.Seconds < 10)
 			{
 				secs = $"0{secs}";
 			}
-			RelojMostrado =  $"{mins}:{secs}";
+			RelojMostrado = $"{mins}:{secs}";
 		}
 		/// <summary>
 		/// Método que se encarga de inicializar el temporizador en el hilo principal
@@ -354,11 +417,11 @@ namespace DamasNamas.ViewModels
 			//se sumará uno a la posicion en Y que vamos a comprobar
 			if (hueco.PosY > HuecoSeleccinado.PosY)
 			{
-				posibleY +=1;
+				posibleY += 1;
 			}
 			else
 			{
-				posibleY -=1;
+				posibleY -= 1;
 			}
 
 			//Si la pieza seleccionada anteriormente es blanca se sumará uno, sino, se restará a la 
@@ -374,11 +437,11 @@ namespace DamasNamas.ViewModels
 			{
 				if (hueco.PosX > HuecoSeleccinado.PosX)
 				{
-					posibleX +=1;
+					posibleX += 1;
 				}
 				else
 				{
-					posibleX -=1;
+					posibleX -= 1;
 				}
 			}
 			//Recogemos el hueco del tablero
@@ -399,7 +462,7 @@ namespace DamasNamas.ViewModels
 
 
 
-		private List<Square> PosiblesComidas {   get; set;  }
+		private List<Square> PosiblesComidas { get; set; }
 
 		private ObservableCollection<Square> GetMovimientoReina()
 		{
@@ -445,7 +508,7 @@ namespace DamasNamas.ViewModels
 					}
 
 				}
-			
+
 
 			}
 
@@ -468,7 +531,7 @@ namespace DamasNamas.ViewModels
 						backupList.Add(huequitoacomprobar);
 						PosiblesComidas.Add(hueco);
 					}
-						
+
 
 					backupList.Remove(hueco);
 				}
@@ -509,8 +572,8 @@ namespace DamasNamas.ViewModels
 
 			//Recojo los unicos dos movimientos posibles (en principio) en las Damas
 			var posibleX = HuecoSeleccinado.PosX;
-			var PosibleYmayor = HuecoSeleccinado.PosY+1;
-			var posibleYmenor = HuecoSeleccinado.PosY-1;
+			var PosibleYmayor = HuecoSeleccinado.PosY + 1;
+			var posibleYmenor = HuecoSeleccinado.PosY - 1;
 			//Si la pieza es blanca, sumaré 1 a la fila, si es negra restaré 1
 			ColorPieza colorPieza = HuecoSeleccinado.TipoPieza;
 			if (colorPieza.Equals(ColorPieza.Blanca))
@@ -708,20 +771,6 @@ namespace DamasNamas.ViewModels
 			}
 		}
 
-		int selectedIndex = -1;
-		public int SelectedIndex
-		{
-			get => selectedIndex;
-			set
-			{
-				if (selectedIndex != value)
-				{
-					selectedIndex = value;
-					OnPropertyChanged("SelectedIndex");
-				}
-			}
-		}
-
 
 
 
@@ -794,7 +843,7 @@ namespace DamasNamas.ViewModels
 		}
 
 
-		
+
 
 		Square RealizarComida()
 		{
@@ -806,17 +855,17 @@ namespace DamasNamas.ViewModels
 			{
 				huecoAComer = HuecosTablero.Where(x => x.PosX == (HuecoSeleccinado.PosX - 1) && x.PosY == (HuecoSeleccinado.PosY - 1)).First();
 
-			}else if (difY > 0 && difX < 0)
+			} else if (difY > 0 && difX < 0)
 			{
 				huecoAComer = HuecosTablero.Where(x => x.PosX == (HuecoSeleccinado.PosX + 1) && x.PosY == (HuecoSeleccinado.PosY - 1)).First();
 			}
-			else if(difY < 0 && difX > 0)
+			else if (difY < 0 && difX > 0)
 			{
-				huecoAComer=HuecosTablero.Where(x => x.PosX == (HuecoSeleccinado.PosX + 1) && x.PosY == (HuecoSeleccinado.PosY - 1)).First();
+				huecoAComer = HuecosTablero.Where(x => x.PosX == (HuecoSeleccinado.PosX + 1) && x.PosY == (HuecoSeleccinado.PosY - 1)).First();
 			}
-			else if(difY < 0 && difX < 0) 
+			else if (difY < 0 && difX < 0)
 			{
-				huecoAComer = HuecosTablero.Where(x => x.PosX == (HuecoSeleccinado.PosX + 1) &&x.PosY == (HuecoSeleccinado.PosY + 1)).First();
+				huecoAComer = HuecosTablero.Where(x => x.PosX == (HuecoSeleccinado.PosX + 1) && x.PosY == (HuecoSeleccinado.PosY + 1)).First();
 			}
 			return huecoAComer;
 		}
@@ -841,7 +890,7 @@ namespace DamasNamas.ViewModels
 			//Si no es reina se comprueba solo el movimiento hacia delante
 			if (!HuecoSeleccinado.EsReina)
 			{
-				if (Estado.Equals(EstadosJuego.TurnoBlancas) && (HuecoSeleccinado.PosX > HuecoAnterior.PosX+1))
+				if (Estado.Equals(EstadosJuego.TurnoBlancas) && (HuecoSeleccinado.PosX > HuecoAnterior.PosX + 1))
 				{
 
 					huecomido = HuecosTablero
@@ -849,7 +898,7 @@ namespace DamasNamas.ViewModels
 						x =>
 						((x.PosX > HuecoAnterior.PosX) && (x.PosX < HuecoSeleccinado.PosX))
 						&&
-						(x.PosY == HuecoAnterior.PosY+signoDifY))
+						(x.PosY == HuecoAnterior.PosY + signoDifY))
 						.First();
 					huecomido.Pieza = "lightynone";
 					huecomido.EsReina = false;
@@ -857,7 +906,7 @@ namespace DamasNamas.ViewModels
 					Tablero.PiezasNegras--;
 					haComido = true;
 				}
-				else if (Estado.Equals(EstadosJuego.TurnoNegras) && (HuecoSeleccinado.PosX < HuecoAnterior.PosX-1))
+				else if (Estado.Equals(EstadosJuego.TurnoNegras) && (HuecoSeleccinado.PosX < HuecoAnterior.PosX - 1))
 				{
 
 
@@ -878,13 +927,13 @@ namespace DamasNamas.ViewModels
 			//Si es reina se comprueba la diagonal completa
 			else
 			{
-				
+
 				var difAbs = Math.Abs(HuecoSeleccinado.PosY - HuecoAnterior.PosY);
 				//Si la diferencia absoluta dentre la posicion de los huecos es 1,
 				//significa que no habrá comido ninguna pieza.
 				if (difAbs == 2)
 				{
-					
+
 					if (signoDifY > 0 && (HuecoSeleccinado.PosX < HuecoAnterior.PosX))
 					{
 
@@ -893,7 +942,7 @@ namespace DamasNamas.ViewModels
 							x =>
 							((x.PosX < HuecoAnterior.PosX) && (x.PosX > HuecoSeleccinado.PosX))
 							&&
-							(x.PosY == HuecoAnterior.PosY+signoDifY))
+							(x.PosY == HuecoAnterior.PosY + signoDifY))
 							.First();
 					}
 
@@ -905,7 +954,7 @@ namespace DamasNamas.ViewModels
 							x =>
 							((x.PosX > HuecoAnterior.PosX) && (x.PosX < HuecoSeleccinado.PosX))
 							&&
-							(x.PosY == HuecoAnterior.PosY+signoDifY))
+							(x.PosY == HuecoAnterior.PosY + signoDifY))
 							.First();
 
 					}
@@ -917,7 +966,7 @@ namespace DamasNamas.ViewModels
 							x =>
 							((x.PosX < HuecoAnterior.PosX) && (x.PosX > HuecoSeleccinado.PosX))
 							&&
-							(x.PosY == HuecoAnterior.PosY+signoDifY))
+							(x.PosY == HuecoAnterior.PosY + signoDifY))
 							.First();
 					}
 					else if (signoDifY < 0 && (HuecoSeleccinado.PosX > HuecoAnterior.PosX))
@@ -927,25 +976,25 @@ namespace DamasNamas.ViewModels
 						   x =>
 						   ((x.PosX > HuecoAnterior.PosX) && (x.PosX < HuecoSeleccinado.PosX))
 						   &&
-						   (x.PosY == HuecoAnterior.PosY+signoDifY))
+						   (x.PosY == HuecoAnterior.PosY + signoDifY))
 						   .First();
 					}
-					
+
 				}
-				else if(difAbs > 2)
+				else if (difAbs > 2)
 				{
 					try
 					{
 						huecomido = RealizarComida();
 					}
 					catch { huecomido = null; }
-					
+
 				}
 				if (huecomido == null)
 				{
 					return haComido;
 				}
-				else if(huecomido.TipoPieza.Equals(ColorPieza.None))
+				else if (huecomido.TipoPieza.Equals(ColorPieza.None))
 				{
 
 					return haComido;
@@ -964,6 +1013,52 @@ namespace DamasNamas.ViewModels
 			}
 			return haComido;
 		}
+
+		#region signalR
+
+
+		public void conectar()
+		{
+			var UrlBase = "http://localhost";
+			hubConnection = new HubConnectionBuilder().WithUrl($"{UrlBase}:5168/DamasHub").Build();
+
+            //hubConnection.On < Square huecoPartida, Square huecoAComer, Square huecoDestino, EstadosJuego estadoPartida > ("RecibirMovimiento", (user, message) =>
+            //{
+            //	//lblChat.Text += $"<b>{user}</b>: {message}<br/>";
+            //	//lo que vamos a recibir y donde va
+            //});
+            //Iniciamos el hub en el hilo principalpara no bloquear la interfaz
+            //Task.Run(() =>
+            //{
+            //    Dispatcher.Dispatch(async () =>
+            //    {
+            //        await hubConnection.StartAsync();
+            //    });
+            //});
+        }
+
+		public async void enviar()
+		{
+			//await HubConnection.InvokeCoreAsync("MandarMovimiento", args: new[]
+			//{
+			//	HuecoAnterior,
+			//	HuecoAComer,
+			//	HuecoSeleccionado,
+			//	Estado
+			//});
+		}
+
+
+
+		#endregion
+
+
+
+
+
+
+
+
 	}
 
 

@@ -5,11 +5,13 @@ VisualStudioVersion = 17.0.31611.283
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DamasNamas", "DamasNamas\DamasNamas.csproj", "{0B2226A4-606B-458B-B432-9672493F68CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Entities", "Entities\Entities.csproj", "{E3E925E5-5B14-45F4-8F7C-D6974E115888}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Entities", "Entities\Entities.csproj", "{E3E925E5-5B14-45F4-8F7C-D6974E115888}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAL", "DAL\DAL.csproj", "{AA30E03B-FA95-475F-A12A-626610DC888F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DAL", "DAL\DAL.csproj", "{AA30E03B-FA95-475F-A12A-626610DC888F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BL", "BL\BL.csproj", "{39337DDC-C476-4F0B-BA9A-2382177C8AAA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BL", "BL\BL.csproj", "{39337DDC-C476-4F0B-BA9A-2382177C8AAA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DamasServer", "DamasServer\DamasServer.csproj", "{1CF4C32B-07D7-4203-8FCC-7E3A1B253B02}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,6 +37,10 @@ Global
 		{39337DDC-C476-4F0B-BA9A-2382177C8AAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{39337DDC-C476-4F0B-BA9A-2382177C8AAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{39337DDC-C476-4F0B-BA9A-2382177C8AAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1CF4C32B-07D7-4203-8FCC-7E3A1B253B02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CF4C32B-07D7-4203-8FCC-7E3A1B253B02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CF4C32B-07D7-4203-8FCC-7E3A1B253B02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CF4C32B-07D7-4203-8FCC-7E3A1B253B02}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
