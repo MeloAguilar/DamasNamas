@@ -1,5 +1,6 @@
 ﻿using BL.Gestion;
 using BL.Listados;
+using CommunityToolkit.Mvvm.ComponentModel;
 using DamasNamas.ViewModels.Utilidades;
 using Entities;
 using System.Collections.ObjectModel;
@@ -16,6 +17,9 @@ namespace DamasNamas.ViewModels
 
 		private ObservableCollection<clsSala> listadoSalasMostrado;
 
+		[NotifyPropertyChangedFor(nameof(ComandoEntrarSala))]
+		[NotifyPropertyChangedFor(nameof(ComandoBuscarSala))]
+		[ObservableProperty]
 		private clsSala salaSeleccionada;
 
 		private string cadenaBusqueda;
@@ -36,21 +40,6 @@ namespace DamasNamas.ViewModels
 
 		#region Propiedades
 
-
-		public clsSala SalaSeleccionada
-		{
-			get
-			{
-				return salaSeleccionada;
-			}
-			set
-			{
-				OnPropertyChanged(nameof(ComandoBuscarSala));
-				OnPropertyChanged(nameof(ComandoEntrarSala));
-				salaSeleccionada = value;
-				OnPropertyChanged("SalaSeleccionada");
-			}
-		}
 
 
 		public ObservableCollection<clsSala> ListadoSalasMostrado
@@ -206,10 +195,11 @@ namespace DamasNamas.ViewModels
 				var dic = new Dictionary<string, object>
 					{
 						{ "SalaEnviada", SalaSeleccionada },
-						{ "EsOnline", true}
+						{ "EsOnline", true},
+					{"JugadorAbajo", JugadorQueLlega }
 					};
 
-
+				clsGestionSalasBL.editarSalaBL(SalaSeleccionada);
 				await Shell.Current.GoToAsync("///Game",true, dic);
 
 			}

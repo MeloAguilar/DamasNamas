@@ -6,9 +6,9 @@ namespace DamasServer.Hubs
 {
 	public class DamasHub : Hub
 	{
-        public async Task MandarMovimiento (int idJugador, Square huecoPartida ,Square huecoAComer, Square huecoDestino, EstadosJuego estadoPartida)
+        public async Task MandarMovimiento (ObjetoSignalR paquete)
         {
-            await Clients.User(idJugador.ToString()).SendAsync("RecibirMovimiento", huecoPartida, huecoAComer, huecoDestino, estadoPartida);
+            await Clients.User(paquete.IdJugador).SendAsync("RecibirMovimiento", paquete);
         }
     }
 }

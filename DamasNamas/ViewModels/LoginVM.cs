@@ -199,6 +199,7 @@ namespace DamasNamas.ViewModels
 
 				var dict = new Dictionary<string, object>();
 				dict.Add("JugadorQueMando", jugadorRegistrado);
+				
 
 
 				await Shell.Current.GoToAsync("///Main", true, dict);

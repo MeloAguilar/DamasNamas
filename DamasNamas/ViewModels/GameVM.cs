@@ -10,15 +10,19 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Windows.Input;
 using Microsoft.AspNetCore.SignalR.Client;
+using System.Numerics;
+using System.Runtime.Intrinsics.Arm;
 
 namespace DamasNamas.ViewModels
 {
+	[QueryProperty(nameof(JugadorAbajo), "JugadorLogeado")]
 	[QueryProperty(nameof(esOnline), "EsOnline")]
 	[QueryProperty(nameof(sala), "SalaEnviada")]
 	partial class GameVM : VMBase
 	{
-		#region Atributes
 
+		#region Atributes
+		clsJugador jugadorLogeado;
 		bool esOnline;
 		clsGameTablero tablero;
 		clsSala _sala;
@@ -28,17 +32,28 @@ namespace DamasNamas.ViewModels
 		clsJugador jugadorAbajo;
 		Square huecoSeleccionado;
 		private ObservableCollection<Square> huecosTablero;
-
 		EstadosJuego estado;
 		String relojMostrado;
 		TimeSpan reloj;
+		private readonly HubConnection hubConnection;
+        String UrlBase = "http://localhost";
 
-		HubConnection hubConnection;
+        #endregion
 
-		#endregion
+        #region Properties
+        private Square HuecoAnterior { get; set; }
 
-		#region Properties
-
+		public clsJugador JugadorLogeado
+		{
+			get
+			{
+				return jugadorLogeado;
+			}
+			set
+			{
+				jugadorLogeado = value;
+			}
+		}
 		public bool EsOnline
 		{
 			get
@@ -48,7 +63,6 @@ namespace DamasNamas.ViewModels
 			set
 			{
 				esOnline = value;
-				OnPropertyChanged(nameof(EsOnline));
 			}
 		}
 		public ObservableCollection<Square> HuecosTablero
@@ -104,47 +118,6 @@ namespace DamasNamas.ViewModels
 
 			}
 		}
-        public HubConnection HubConnection
-		{
-            get
-            {
-                return hubConnection;
-            }
-            set
-            {
-				hubConnection = value;
-            }
-        }
-        #endregion
-
-
-        async void GestionUsuarios()
-		{
-			var listaSalas = await clsListadoSalasBL.getSalasBL();
-			foreach (var salaProbar in listaSalas)
-			{
-				if (salaProbar.nombreSala.Equals(sala.nombreSala))
-				{
-					sala.codSala = salaProbar.codSala;
-
-				}
-			}
-
-			jugadorAbajo = await clsGestionJugadoresBL.getJugadorBL(sala.jugadorAbajo);
-			jugadorArriba = await clsGestionJugadoresBL.getJugadorBL(sala.jugadorArriba);
-
-			NombreJugadorAbajo = jugadorAbajo.nombre;
-			NombreJugadorArriba = jugadorArriba.nombre;
-			if (NombreJugadorAbajo.Equals("Test"))
-			{
-				NombreJugadorAbajo = ("");
-			}
-
-		}
-
-
-		#region Properties
-
 		public Color ColorTurnoArriba
 		{
 			get
@@ -229,6 +202,7 @@ namespace DamasNamas.ViewModels
 				huecoSeleccionado = value;
 				GetPosiblePosicion();
 				OnPropertyChanged("HuecoSeleccionado");
+				
 				OnPropertyChanged(nameof(HuecosTablero));
 			}
 		}
@@ -238,7 +212,12 @@ namespace DamasNamas.ViewModels
 			get { return jugadorAbajo; }
 			set
 			{
-				jugadorAbajo = value;
+				if (jugadorAbajo != null)
+				{
+					jugadorAbajo = value;
+					sala.jugadorAbajo = jugadorAbajo.idJugador;
+					clsGestionSalasBL.editarSalaBL(sala);
+				}
 				OnPropertyChanged(nameof(JugadorAbajo));
 			}
 		}
@@ -248,22 +227,52 @@ namespace DamasNamas.ViewModels
 			get { return estado; }
 			set { estado = value; OnPropertyChanged(nameof(Estado)); }
 		}
+
+
 		public TimeSpan Reloj
 		{
 			get { return reloj; }
 			set { reloj = value; OnPropertyChanged(nameof(Reloj)); }
 		}
 
-
-
-
 		#endregion
 
 
+		async void GestionUsuarios()
+		{
+			var listaSalas = await clsListadoSalasBL.getSalasBL();
+			foreach (var salaProbar in listaSalas)
+			{
+				if (salaProbar.nombreSala.Equals(sala.nombreSala))
+				{
+					sala = salaProbar;
+
+				}
+			}
+
+			JugadorAbajo = await clsGestionJugadoresBL.getJugadorBL(sala.jugadorAbajo);
+			JugadorArriba = await clsGestionJugadoresBL.getJugadorBL(sala.jugadorArriba);
+
+			NombreJugadorAbajo = jugadorAbajo.nombre;
+			NombreJugadorArriba = jugadorArriba.nombre;
+
+			if (NombreJugadorAbajo.Equals("Test"))
+			{
+				NombreJugadorAbajo = ("");
+			}
+
+		}
+
+
+
+
+
+		#region Constructors
 		public GameVM()
 		{
-
-
+			hubConnection = new HubConnectionBuilder().WithUrl($"{UrlBase}:5168/DamasHub").Build();
+			hubConnection.StartAsync();
+			
 			ColorTurnoArriba = Colors.LightGreen;
 			ColorTurnoAbajo = Colors.LightGray;
 			PosiblesComidas = new List<Square>();
@@ -273,6 +282,11 @@ namespace DamasNamas.ViewModels
 			jugadorAbajo = new clsJugador();
 			BeginMatch();
 		}
+
+
+
+		#endregion
+
 
 
 		//Método que se encargue de mover la pieza
@@ -289,11 +303,11 @@ namespace DamasNamas.ViewModels
 
 		public async void BeginMatch()
 		{
-			if(esOnline)
+			if (esOnline)
 			{
 				while (JugadorAbajo.idJugador == 0 && JugadorAbajo.nombre.Equals("Test"))
 				{
-					await Shell.Current.DisplayAlert("","Esperando al otro jugador", "ok");
+					await Shell.Current.DisplayAlert("", "Esperando al otro jugador", "ok");
 				}
 			}
 			else
@@ -304,26 +318,6 @@ namespace DamasNamas.ViewModels
 			}
 		}
 
-		//public void EndMatch()
-		//{
-		//	if (Tablero.cantidadFichasAbajo == 0)
-		//		Estado = EstadosJuego.BlancoGana;
-		//	else if (Tablero.cantidadFichasArriba == 0)
-		//		Estado = EstadosJuego.NegroGana;
-
-		//}
-
-
-		//	PutTiempo();
-		//}
-
-		public void ChangeTurn()
-		{
-			if (Estado.Equals(EstadosJuego.TurnoBlancas))
-				Estado = EstadosJuego.TurnoNegras;
-			else if (Estado.Equals(EstadosJuego.TurnoNegras))
-				Estado = EstadosJuego.TurnoBlancas;
-		}
 
 
 		/// <summary>
@@ -673,6 +667,7 @@ namespace DamasNamas.ViewModels
 					ModificarColorHuecos("selected");
 
 					HuecoAnterior = new(HuecoSeleccinado);
+
 				}
 
 
@@ -724,7 +719,7 @@ namespace DamasNamas.ViewModels
 		/// <pre>ninguna</pre>
 		/// <post>ninguna</post>
 		/// </summary>
-		private void SetTurno()
+		private async void SetTurno()
 		{
 			if (Tablero.PiezasBlancas == 0)
 			{
@@ -747,12 +742,22 @@ namespace DamasNamas.ViewModels
 				ColorTurnoArriba = Colors.LightGreen;
 				ColorTurnoAbajo = Colors.LightGray;
 			}
+
+			if((JugadorLogeado.idJugador == JugadorArriba.idJugador && Estado.Equals(EstadosJuego.TurnoBlancas)) || (JugadorLogeado.idJugador == JugadorAbajo.idJugador && Estado.Equals(EstadosJuego.TurnoNegras)))
+			{
+				await Enviar();
+			}
+			else
+			{
+				Conectar();
+			}
+			
 		}
 
 
 
 
-		private Square HuecoAnterior { get; set; }
+
 		private ObservableCollection<Square> ListaPosiblesHuecos { get; set; }
 
 		/// <summary>
@@ -855,7 +860,8 @@ namespace DamasNamas.ViewModels
 			{
 				huecoAComer = HuecosTablero.Where(x => x.PosX == (HuecoSeleccinado.PosX - 1) && x.PosY == (HuecoSeleccinado.PosY - 1)).First();
 
-			} else if (difY > 0 && difX < 0)
+			}
+			else if (difY > 0 && difX < 0)
 			{
 				huecoAComer = HuecosTablero.Where(x => x.PosX == (HuecoSeleccinado.PosX + 1) && x.PosY == (HuecoSeleccinado.PosY - 1)).First();
 			}
@@ -1014,52 +1020,45 @@ namespace DamasNamas.ViewModels
 			return haComido;
 		}
 
-		#region signalR
+        #region signalR
 
-
-		public void conectar()
+        public void Conectar()
 		{
-			var UrlBase = "http://localhost";
-			hubConnection = new HubConnectionBuilder().WithUrl($"{UrlBase}:5168/DamasHub").Build();
+			
+            hubConnection.On<ObjetoSignalR>("RecibirMovimiento", (paquete) =>
+			{
+				if (JugadorLogeado.idJugador == 0)
+				{
+					JugadorLogeado.idJugador = Int32.Parse(paquete.IdJugador);
+				}
+				//lo que vamos a recibir y donde va
+				Estado = paquete.EstadoJuego;
+				HuecoAnterior = paquete.HuecoInicial;
 
-            //hubConnection.On < Square huecoPartida, Square huecoAComer, Square huecoDestino, EstadosJuego estadoPartida > ("RecibirMovimiento", (user, message) =>
-            //{
-            //	//lblChat.Text += $"<b>{user}</b>: {message}<br/>";
-            //	//lo que vamos a recibir y donde va
-            //});
-            //Iniciamos el hub en el hilo principalpara no bloquear la interfaz
-            //Task.Run(() =>
-            //{
-            //    Dispatcher.Dispatch(async () =>
-            //    {
-            //        await hubConnection.StartAsync();
-            //    });
-            //});
-        }
+				HuecoSeleccinado = paquete.HuecoFinal;
 
-		public async void enviar()
-		{
-			//await HubConnection.InvokeCoreAsync("MandarMovimiento", args: new[]
-			//{
-			//	HuecoAnterior,
-			//	HuecoAComer,
-			//	HuecoSeleccionado,
-			//	Estado
-			//});
+			}
+			);
+	
 		}
 
+       
+        public async Task Enviar()
+        {
+            var paquete = new ObjetoSignalR { IdJugador = JugadorLogeado.idJugador.ToString(), HuecoInicial = HuecoAnterior, HuecoFinal = HuecoSeleccinado, EstadoJuego = Estado };
+            await hubConnection.InvokeAsync("MandarMovimiento", paquete);
+        }
+
+        #endregion
 
 
-		#endregion
 
 
 
 
 
 
-
-
-	}
+    }
 
 
 
