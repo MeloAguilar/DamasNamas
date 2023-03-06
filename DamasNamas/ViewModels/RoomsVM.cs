@@ -162,7 +162,7 @@ namespace DamasNamas.ViewModels
 						clsGestionSalasBL.insertarSalaBL(sala);
 						var dic = new Dictionary<string, object>();
 						dic.Add("SalaEnviada", sala );
-						dic.Add("esOnline", true);
+						dic.Add("EsOnline", true);
 				
 
 
@@ -206,7 +206,7 @@ namespace DamasNamas.ViewModels
 				var dic = new Dictionary<string, object>
 					{
 						{ "SalaEnviada", SalaSeleccionada },
-						{ "esOnline", true}
+						{ "EsOnline", true}
 					};
 
 
