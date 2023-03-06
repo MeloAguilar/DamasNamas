@@ -17,6 +17,33 @@ namespace DamasNamas.ViewModels
 	{
 		clsGameTablero tablero;
 		clsSala _sala;
+		String nombreJugadorArriba;
+		String nombreJugadorAbajo;
+		public String NombreJugadorArriba
+		{
+			get
+			{
+				return nombreJugadorArriba;
+			}
+			set
+			{
+				nombreJugadorArriba = value;
+				OnPropertyChanged(nameof(NombreJugadorArriba));
+			}
+		}	
+
+		public String NombreJugadorAbajo
+		{
+			get
+			{
+				return nombreJugadorAbajo;
+			}
+			set
+			{
+				nombreJugadorAbajo = value;
+				OnPropertyChanged(nameof(NombreJugadorAbajo));
+			}
+		}	
 		public clsSala sala 
 		{ 
 			get 
@@ -45,6 +72,9 @@ namespace DamasNamas.ViewModels
 
 			jugadorAbajo = await clsGestionJugadoresBL.getJugadorBL(sala.jugadorAbajo);
 			jugadorArriba = await clsGestionJugadoresBL.getJugadorBL(sala.jugadorArriba);
+
+			NombreJugadorAbajo = jugadorAbajo.nombre;
+			NombreJugadorArriba = jugadorArriba.nombre;
 		}
 		clsJugador jugadorArriba;
 

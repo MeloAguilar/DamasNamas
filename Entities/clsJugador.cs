@@ -23,7 +23,7 @@ namespace Entities
 
 		public int idJugador { get { return _idJugador; } set { _idJugador = value; } }
 
-		public String nombre { get { return _nombre; } set { _nombre = value; } }
+		public String nombre { get { return _nombre; } set { _nombre = value;} }
 
 		public String password { get { return _password; } set { _password = value; } }
 

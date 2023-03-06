@@ -61,7 +61,7 @@
                 <Label
                 FontSize="25"
                 FontFamily="Bold"
-                Text="{Binding JugadorArriba.nombre}"
+                Text="{Binding JugadorArriba.nombre, Mode=OneWay}"
                 VerticalOptions="Center"
                 HorizontalOptions="Start"/>
 
@@ -129,7 +129,7 @@
                 <Label
                 FontSize="25"
                 FontFamily="Bold"
-                Text="{Binding JugadorAbajo.nombre}"
+                Text="{Binding JugadorAbajo.nombre, Mode=OneWay}"
                 VerticalOptions="Center"
                 HorizontalOptions="Start"/>
 
